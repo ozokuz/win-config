@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+properties:
+  configurationVersion: "0.2.0"
+  resources:
+    - resource: PSDscResources/WindowsOptionalFeature
+      directives:
+        description: Install Hyper-V
+      settings:
+        Ensure: Present
+        Name: Microsoft-Hyper-V-All
+    - resource: PSDscResources/WindowsOptionalFeature
+      directives:
+        description: Enable Windows Hypervisor Platform
+      settings:
+        Ensure: Present
+        Name: HypervisorPlatform
+    - resource: PSDscResources/WindowsOptionalFeature
+      directives:
+        description: Install .NET 3.5
+      settings:
+        Ensure: Present
+        Name: NetFx3
+    - resource: PSDscResources/Script
+      directives:
+        description: Install WSL
+      settings:
+        GetScript: |
+          {
+            return wsl.exe -l -q
+          }
+        TestScript: |
+          {
+            wsl.exe -l -q | where-object {$_ -eq "Ubuntu"}
+            return $?
+          }
+        SetScript: |
+          {
+            wsl.exe --install
+            return $true
+          }

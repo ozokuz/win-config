@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+properties:
+  configurationVersion: "0.2.0"
+  resources:
+    # Settings
+    # Enable Developer Mode
+    - resource: Microsoft.Windows.Developer/DeveloperMode
+      directives:
+        description: Enable Developer Mode
+        allowPrerelease: true
+      settings:
+        Ensure: Present
+    # Show File Extensions
+    - resource: Microsoft.Windows.Developer/HideFileExtensions
+      directives:
+        description: Show File Extensions
+        allowPrerelease: true
+      settings:
+        Ensure: Absent
+    # Hide Task View Button
+    - resource: Microsoft.Windows.Developer/ShowTaskViewButton
+      id: "stupidTaskViewBug"
+      directives:
+        description: Stupid Task View Button Setting Bug
+        allowPrerelease: true
+      settings:
+        Ensure: Present
+    - resource: Microsoft.Windows.Developer/ShowTaskViewButton
+      directives:
+        description: Hide Task View Button
+        allowPrerelease: true
+      dependsOn:
+        - "stupidTaskViewBug"
+      settings:
+        Ensure: Absent
+    # Show Hidden Files
+    - resource: Microsoft.Windows.Developer/ShowHiddenFiles
+      directives:
+        description: Show Hidden Files
+        allowPrerelease: true
+      settings:
+        Ensure: Present
+    # Enable Dark Mode
+    - resource: Microsoft.Windows.Developer/EnableDarkMode
+      directives:
+        description: Enable Dark Mode
+        allowPrerelease: true
+      settings:
+        Ensure: Present
+    # Run O&O Shutup 10++
+    - resource: PSDscResources/Script
+      directives:
+        description: Run OOSU
+      settings:
+        GetScript: |
+          {
+            return $true
+          }
+        TestScript: |
+          {
+            return $false
+          }
+        SetScript: |
+          {
+            Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/oosu.ps1 | Invoke-Expression
+            return $true
+          }
