@@ -53,15 +53,9 @@ properties:
         description: Run OOSU
       settings:
         GetScript: |
-          {
-            return $true
-          }
+          return $true
         TestScript: |
-          {
-            return $false
-          }
+          return $false
         SetScript: |
-          {
-            Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/oosu.ps1 | Invoke-Expression
-            return $true
-          }
+          Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/oosu.ps1 | Invoke-Expression
+          return $true
