@@ -4,6 +4,20 @@ apps: powertoys, everything
 install scoop
 scoop apps: neovim, winfetch, ripgrep, fd, make, gcc,
 
+## Settings
+
+- Storage Sense off
+- Alt+Tab Edge tabs off
+- Clipboard History on
+- 1.1.1.1 as DNS
+- Wallpaper
+- Disable Start Menu Recommendations
+- Taskbar Pins
+- FiraCode Font
+- Default Browser
+- File Explorer opens to This PC
+- Terminal as Default
+- Start Menu Folders
 
 ## Utils
 
@@ -43,7 +57,7 @@ scoop apps: neovim, winfetch, ripgrep, fd, make, gcc,
 - Git
 - GitHub CLI
 - LazyGit
-- NeoVim
+- NeoVim, ripgrep, fd, make, gcc
 - JetBrains Toolbox
 
 - NodeJS?
