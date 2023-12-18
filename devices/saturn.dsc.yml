@@ -2,39 +2,44 @@
 properties:
   configurationVersion: "0.2.0"
   resources:
-    - resource: PSDscResources/WindowsOptionalFeature
+    - resource: PSDscResources/Script
       directives:
         description: Install Hyper-V
       settings:
-        Ensure: Present
-        Name: Microsoft-Hyper-V-All
-    - resource: PSDscResources/WindowsOptionalFeature
+        GetScript: |
+          return DISM /Online /Get-FeatureInfo /FeatureName:Microsoft-Hyper-V
+        TestScript:
+          return (DISM /Online /Get-FeatureInfo /FeatureName:Microsoft-Hyper-V | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
+        SetScript: |
+          DISM /Online /Enable-Feature /FeatureName:Microsoft-Hyper-V /All /NoRestart
+    - resource: PSDscResources/Script
       directives:
         description: Enable Windows Hypervisor Platform
       settings:
-        Ensure: Present
-        Name: HypervisorPlatform
-    - resource: PSDscResources/WindowsOptionalFeature
+        GetScript: |
+          return DISM /Online /Get-FeatureInfo HypervisorPlatform
+        TestScript:
+          return (DISM /Online /Get-FeatureInfo /FeatureName:HypervisorPlatform | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
+        SetScript: |
+          DISM /Online /Enable-Feature /FeatureName:HypervisorPlatform /NoRestart
+    - resource: PSDscResources/Script
       directives:
         description: Install .NET 3.5
       settings:
-        Ensure: Present
-        Name: NetFx3
+        GetScript: |
+          return DISM /Online /Get-FeatureInfo NetFx3
+        TestScript:
+          return (DISM /Online /Get-FeatureInfo /FeatureName:NetFx3 | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
+        SetScript: |
+          DISM /Online /Enable-Feature /FeatureName:NetFx3 /NoRestart
     - resource: PSDscResources/Script
       directives:
         description: Install WSL
       settings:
         GetScript: |
-          {
             return wsl.exe -l -q
-          }
         TestScript: |
-          {
             wsl.exe -l -q | where-object {$_ -eq "Ubuntu"}
             return $?
-          }
         SetScript: |
-          {
             wsl.exe --install
-            return $true
-          }
