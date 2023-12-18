@@ -5,6 +5,7 @@ properties:
     # Settings
     # Enable Developer Mode
     - resource: Microsoft.Windows.Developer/DeveloperMode
+      id: EnableDeveloperMode
       directives:
         description: Enable Developer Mode
         allowPrerelease: true
@@ -12,6 +13,7 @@ properties:
         Ensure: Present
     # Show File Extensions
     - resource: Microsoft.Windows.Developer/HideFileExtensions
+      id: ShowFileExtensions
       directives:
         description: Show File Extensions
         allowPrerelease: true
@@ -26,6 +28,7 @@ properties:
       settings:
         Ensure: Present
     - resource: Microsoft.Windows.Developer/ShowTaskViewButton
+      id: HideTaskView
       directives:
         description: Hide Task View Button
         allowPrerelease: true
@@ -35,6 +38,7 @@ properties:
         Ensure: Absent
     # Show Hidden Files
     - resource: Microsoft.Windows.Developer/ShowHiddenFiles
+      id: ShowHiddenFiles
       directives:
         description: Show Hidden Files
         allowPrerelease: true
@@ -42,6 +46,7 @@ properties:
         Ensure: Present
     # Enable Dark Mode
     - resource: Microsoft.Windows.Developer/EnableDarkMode
+      id: EnableDarkMode
       directives:
         description: Enable Dark Mode
         allowPrerelease: true
@@ -49,6 +54,7 @@ properties:
         Ensure: Present
     # Run O&O Shutup 10++
     - resource: PSDscResources/Script
+      id: OOSU
       directives:
         description: Run OOSU
       settings:
@@ -57,17 +63,19 @@ properties:
         TestScript: |
           return $false
         SetScript: |
-          Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/oosu.ps1 | Invoke-Expression
-          return $true
+          Invoke-WebRequest -UseBasicParsing https://raw.githubusercontent.com/ozokuz/win-config/main/oosu.ps1 -OutFile "$env:USERPROFILE\Downloads\oosu.ps1"
+          powershell.exe -Command "$env:USERPROFILE\Downloads\oosu.ps1"
     # Install Utils (7-Zip, PowerToys, PowerShell, Everything, AltSnap, ShareX, Tailscale, EarTrumpet, WizTree, Nilesoft Shell)
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: 7Zip
       directives:
         description: Install 7-Zip
         allowPrerelease: true
       settings:
-        id: 7zip.7zip
+        id: "7zip.7zip"
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: PowerToys
       directives:
         description: Install PowerToys
         allowPrerelease: true
@@ -75,6 +83,7 @@ properties:
         id: Microsoft.PowerToys
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: PowerShell
       directives:
         description: Install PowerShell
         allowPrerelease: true
@@ -82,6 +91,7 @@ properties:
         id: Microsoft.PowerShell
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Everything
       directives:
         description: Install Everything
         allowPrerelease: true
@@ -89,6 +99,7 @@ properties:
         id: voidtools.Everything
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: AltSnap
       directives:
         description: Install AltSnap
         allowPrerelease: true
@@ -96,6 +107,7 @@ properties:
         id: AltSnap.AltSnap
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: ShareX
       directives:
         description: Install ShareX
         allowPrerelease: true
@@ -103,6 +115,7 @@ properties:
         id: ShareX.ShareX
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Tailscale
       directives:
         description: Install Tailscale
         allowPrerelease: true
@@ -110,6 +123,7 @@ properties:
         id: tailscale.tailscale
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: EarTrumpet
       directives:
         description: Install EarTrumpet
         allowPrerelease: true
@@ -117,6 +131,7 @@ properties:
         id: File-New-Project.EarTrumpet
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: WizTree
       directives:
         description: Install WizTree
         allowPrerelease: true
@@ -124,6 +139,7 @@ properties:
         id: AntibodySoftware.WizTree
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: NilesoftShell
       directives:
         description: Install Nilesoft Shell
         allowPrerelease: true

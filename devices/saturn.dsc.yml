@@ -3,6 +3,7 @@ properties:
   configurationVersion: "0.2.0"
   resources:
     - resource: PSDscResources/Script
+      id: HyperV
       directives:
         description: Install Hyper-V
       settings:
@@ -13,6 +14,7 @@ properties:
         SetScript: |
           DISM /Online /Enable-Feature /FeatureName:Microsoft-Hyper-V /All /NoRestart
     - resource: PSDscResources/Script
+      id: HypervisorPlatform
       directives:
         description: Enable Windows Hypervisor Platform
       settings:
@@ -23,6 +25,7 @@ properties:
         SetScript: |
           DISM /Online /Enable-Feature /FeatureName:HypervisorPlatform /NoRestart
     - resource: PSDscResources/Script
+      id: NetFx3
       directives:
         description: Install .NET 3.5
       settings:
@@ -33,6 +36,7 @@ properties:
         SetScript: |
           DISM /Online /Enable-Feature /FeatureName:NetFx3 /NoRestart
     - resource: PSDscResources/Script
+      id: WSL
       directives:
         description: Install WSL
       settings:
