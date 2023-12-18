@@ -18,6 +18,7 @@ scoop apps: neovim, winfetch, ripgrep, fd, make, gcc,
 - File Explorer opens to This PC
 - Terminal as Default
 - Start Menu Folders
+- Hide Desktop Icons
 
 ## Utils
 

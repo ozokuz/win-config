@@ -1,4 +1,4 @@
-$folder = "$env:USERPROFILE\Tools"
+$folder = "$env:USERPROFILE\Tools\OOSU"
 if (-not (Test-Path "$folder"))
 {
     mkdir "$folder"

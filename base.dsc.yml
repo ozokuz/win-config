@@ -21,7 +21,7 @@ properties:
         Ensure: Absent
     # Hide Task View Button
     - resource: Microsoft.Windows.Developer/ShowTaskViewButton
-      id: "stupidTaskViewBug"
+      id: StupidTaskViewDSCBug
       directives:
         description: Stupid Task View Button Setting Bug
         allowPrerelease: true
@@ -33,7 +33,7 @@ properties:
         description: Hide Task View Button
         allowPrerelease: true
       dependsOn:
-        - "stupidTaskViewBug"
+        - StupidTaskViewDSCBug
       settings:
         Ensure: Absent
     # Show Hidden Files
@@ -52,9 +52,47 @@ properties:
         allowPrerelease: true
       settings:
         Ensure: Present
+    # Setup Folder Structure
+    - resource: PSDscResources/Script
+      id: FolderStructure
+      directives:
+        description: Setup Folder Structure
+      settings:
+        GetScript: |
+          $dotConfig = Test-Path "$env:USERPROFILE\.config" -Type Container
+          $tools = Test-Path "$env:USERPROFILE\Tools" -Type Container
+          $src = Test-Path "D:\src" -Type Container
+          $srcp = Test-Path "D:\src\p" -Type Container
+          $srcs = Test-Path "D:\src\s" -Type Container
+          $srcNrth = Test-Path "D:\src\nrth" -Type Container
+          return ${
+            dotConfig = $dotConfig;
+            tools = $tools;
+            src = $src;
+            srcp = $srcp;
+            srcs = $srcs;
+            srcNrth = $srcNrth
+          }
+        TestScript: |
+          $dotConfig = Test-Path "$env:USERPROFILE\.config" -Type Container
+          $tools = Test-Path "$env:USERPROFILE\Tools" -Type Container
+          $src = Test-Path "D:\src" -Type Container
+          $srcp = Test-Path "D:\src\p" -Type Container
+          $srcs = Test-Path "D:\src\s" -Type Container
+          $srcNrth = Test-Path "D:\src\nrth" -Type Container
+          return $dotConfig -and $tools -and $src -and $srcp -and $srcs -and $srcNrth
+        SetScript: |
+          mkdir "$env:USERPROFILE\.config" -ErrorAction SilentlyContinue
+          mkdir "$env:USERPROFILE\Tools" -ErrorAction SilentlyContinue
+          mkdir "D:\src" -ErrorAction SilentlyContinue
+          mkdir "D:\src\p" -ErrorAction SilentlyContinue
+          mkdir "D:\src\s" -ErrorAction SilentlyContinue
+          mkdir "D:\src\nrth" -ErrorAction SilentlyContinue
     # Run O&O Shutup 10++
     - resource: PSDscResources/Script
       id: OOSU
+      dependsOn:
+        - FolderStructure
       directives:
         description: Run OOSU
       settings:
@@ -65,7 +103,30 @@ properties:
         SetScript: |
           Invoke-WebRequest -UseBasicParsing https://raw.githubusercontent.com/ozokuz/win-config/main/oosu.ps1 -OutFile "$env:USERPROFILE\Downloads\oosu.ps1"
           powershell.exe -Command "$env:USERPROFILE\Downloads\oosu.ps1"
-    # Install Utils (7-Zip, PowerToys, PowerShell, Everything, AltSnap, ShareX, Tailscale, EarTrumpet, WizTree, Nilesoft Shell)
+    # Setup Quick Access Pins
+    - resource: PSDscResources/Script
+      id: QuickAccess
+      dependsOn:
+        - FolderStructure
+      directives:
+        description: Setup Quick Access Pins
+      settings:
+        GetScript: |
+          $o = new-object -com shell.application
+          $pins = @("$env:USERNAME","src","Downloads","Documents","Tools","Recycle Bin")
+          return ($o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items() | where {$_.name -notin $pins})
+        TestScript: |
+          $o = new-object -com shell.application
+          $pins = @("$env:USERNAME","src","Downloads","Documents","Tools","Recycle Bin")
+          $count = ($o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items() | where {$_.name -notin $pins} | measure).Count
+          return $count -eq 0
+        SetScript: |
+          $o = new-object -com shell.application
+          $allowedPins = @("$env:USERNAME","src","Downloads","Documents","Tools","Recycle Bin")
+          $o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items() | where {$_.name -notin $allowedPins} | foreach-object {$_.InvokeVerb("unpinfromhome")}
+          $pins = @("$env:USERPROFILE", "D:\src", "$env:USERPROFILE\Tools", "::{645FF040-5081-101B-9F08-00AA002F954E}")
+          $pins | foreach-object {$o.Namespace($_).Self.InvokeVerb("pintohome")}
+    # Install Utils (7-Zip, PowerToys, PowerShell, Everything, AltSnap, ShareX, Tailscale, EarTrumpet, WizTree & Nilesoft Shell)
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: 7Zip
       directives:
@@ -146,3 +207,49 @@ properties:
       settings:
         id: Nilesoft.Shell
         source: winget
+    # Install Windows Features (Hyper-V, Hypervisor Platform, .NET 3.5 & WSL)
+    - resource: PSDscResources/Script
+      id: HyperV
+      directives:
+        description: Install Hyper-V
+      settings:
+        GetScript: |
+          return DISM /Online /Get-FeatureInfo /FeatureName:Microsoft-Hyper-V
+        TestScript:
+          return (DISM /Online /Get-FeatureInfo /FeatureName:Microsoft-Hyper-V | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
+        SetScript: |
+          DISM /Online /Enable-Feature /FeatureName:Microsoft-Hyper-V /All /NoRestart
+    - resource: PSDscResources/Script
+      id: HypervisorPlatform
+      directives:
+        description: Enable Windows Hypervisor Platform
+      settings:
+        GetScript: |
+          return DISM /Online /Get-FeatureInfo HypervisorPlatform
+        TestScript:
+          return (DISM /Online /Get-FeatureInfo /FeatureName:HypervisorPlatform | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
+        SetScript: |
+          DISM /Online /Enable-Feature /FeatureName:HypervisorPlatform /NoRestart
+    - resource: PSDscResources/Script
+      id: NetFx3
+      directives:
+        description: Install .NET 3.5
+      settings:
+        GetScript: |
+          return DISM /Online /Get-FeatureInfo NetFx3
+        TestScript:
+          return (DISM /Online /Get-FeatureInfo /FeatureName:NetFx3 | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
+        SetScript: |
+          DISM /Online /Enable-Feature /FeatureName:NetFx3 /NoRestart
+    - resource: PSDscResources/Script
+      id: WSL
+      directives:
+        description: Install WSL
+      settings:
+        GetScript: |
+            return wsl.exe -l -q
+        TestScript: |
+            wsl.exe -l -q | where-object {$_ -eq "Ubuntu"}
+            return $?
+        SetScript: |
+            wsl.exe --install
