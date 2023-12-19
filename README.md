@@ -12,3 +12,5 @@
 - Install Store Apps
   - Spotify
   - WhatsApp
+
+`winget configure .\base.dsc.yml --accept-configuration-agreements`
