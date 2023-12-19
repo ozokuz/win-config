@@ -360,6 +360,7 @@ properties:
         - VSConfig
       directives:
         description: Install VS workloads from VSConfig
+        maxVersion: "1.0.15"
         allowPrerelease: true
       settings:
         productId: Microsoft.VisualStudio.Product.Community
