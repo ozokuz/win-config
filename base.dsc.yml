@@ -13,7 +13,11 @@ properties:
         TestScript: |
           return $false
         SetScript: |
-          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+          $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
+          Register-ScheduledTask -TaskName "ExecutionPolicy" -Action $action
+          Start-ScheduledTask "ExecutionPolicy"
+          Start-Sleep 2
+          Unregister-ScheduledTask "ExecutionPolicy" -Confirm:$false
     # Remove Bloat Default Apps
     - resource: PSDscResources/Script
       id: RemoveDefaultApps
@@ -401,7 +405,7 @@ properties:
               Start-Sleep 1
             }
           } until ($scoopComplete)
-          Unregister-ScheduledTask "SetupScoop"
+          Unregister-ScheduledTask "SetupScoop" -Confirm:$false
           Remove-Item "$env:USERPROFILE\Downloads\scoop.ps1"
     # Install Windows Features (Hyper-V, Hypervisor Platform, .NET 3.5 & WSL)
     - resource: PSDscResources/Script
