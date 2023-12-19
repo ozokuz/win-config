@@ -2,6 +2,18 @@
 properties:
   configurationVersion: "0.2.0"
   resources:
+    # Set PowerShell Execution Policy
+    - resource: PSDscResources/Script
+      id: RemoveDefaultApps
+      directives:
+        description: Remove Bloat Default Apps
+      settings:
+        GetScript: |
+          return $true
+        TestScript: |
+          return $false
+        SetScript: |
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
     # Remove Bloat Default Apps
     - resource: PSDscResources/Script
       id: RemoveDefaultApps
@@ -114,7 +126,7 @@ properties:
         TestScript: |
           return $false
         SetScript: |
-          Invoke-WebRequest -UseBasicParsing https://raw.githubusercontent.com/ozokuz/win-config/main/oosu.ps1 -OutFile "$env:USERPROFILE\Downloads\oosu.ps1"
+          Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/oosu.ps1 -OutFile "$env:USERPROFILE\Downloads\oosu.ps1"
           powershell.exe -Command "$env:USERPROFILE\Downloads\oosu.ps1"
     # Setup Quick Access Pins
     - resource: PSDscResources/Script
@@ -301,6 +313,96 @@ properties:
       settings:
         id: dotPDNLLC.paintdotnet
         source: winget
+    # Install Dev Tools
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Git
+      directives:
+        description: Install Git
+        allowPrerelease: true
+      settings:
+        id: Git.Git
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: VSCode
+      directives:
+        description: Install Visual Studio Code
+        allowPrerelease: true
+      settings:
+        id: Microsoft.VisualStudioCode
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: VS2022
+      directives:
+        description: Install Visual Studio 2022 Community
+        allowPrerelease: true
+      settings:
+        id: Microsoft.VisualStudio.2022.Community
+        source: winget
+    - resource: PSDscResources/Script
+      id: VSConfig
+      directives:
+        description: Download VSConfig
+      settings:
+        GetScript: |
+          return $true
+        TestScript: |
+          return Test-Path "$env:USERPROFILE\Downloads\vsconfig"
+        SetScript: |
+          Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/.vsconfig -OutFile "$env:USERPROFILE\Downloads\.vsconfig"
+    - resource: Microsoft.VisualStudio.DSC/VSComponents
+      id: VSWorkloads
+      dependsOn:
+        - VS2022
+        - VSConfig
+      directives:
+        description: Install VS workloads from VSConfig
+        allowPrerelease: true
+      settings:
+        productId: Microsoft.VisualStudio.Product.Community
+        channelId: VisualStudio.17.Release
+        vsConfigFile: '${WinGetConfigRoot}\.vsconfig'
+        includeRecommended: true
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: GitHubCLI
+      directives:
+        description: Install GitHub CLI
+        allowPrerelease: true
+      settings:
+        id: GitHub.cli
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: JBToolbox
+      directives:
+        description: Install JetBrains Toolbox
+        allowPrerelease: true
+      settings:
+        id: JetBrains.Toolbox
+        source: winget
+    # Install Scoop & Scoop apps
+    - resource: PSDscResources/Script
+      id: Scoop
+      dependsOn:
+        - Git
+      directives:
+        description: Install Scoop
+      settings:
+        GetScript: |
+          return $true
+        TestScript: |
+          return Test-Path "$env:USERPROFILE\scoop" -Type Container
+        SetScript: |
+          Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/scoop.ps1 -OutFile "$env:USERPROFILE\Downloads\scoop.ps1"
+          $action = New-ScheduledTaskAction -Execute "powershell.exe -Command '$env:USERPROFILE\Downloads\scoop.ps1'"
+          Register-ScheduledTask -TaskName "SetupScoop" -Action $action
+          Start-ScheduledTask "SetupScoop"
+          do {
+            $scoopComplete = Test-Path "$env:USERPROFILE\scoop\shims\wget.exe"
+            if (-not ($scoopComplete)) {
+              Start-Sleep 1
+            }
+          } until ($scoopComplete)
+          Unregister-ScheduledTask "SetupScoop"
+          Remove-Item "$env:USERPROFILE\Downloads\scoop.ps1"
     # Install Windows Features (Hyper-V, Hypervisor Platform, .NET 3.5 & WSL)
     - resource: PSDscResources/Script
       id: HyperV
