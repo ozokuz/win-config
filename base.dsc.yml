@@ -4,9 +4,9 @@ properties:
   resources:
     # Set PowerShell Execution Policy
     - resource: PSDscResources/Script
-      id: RemoveDefaultApps
+      id: ExecutionPolicy
       directives:
-        description: Remove Bloat Default Apps
+        description: Set PowerShell Execution Policy
       settings:
         GetScript: |
           return $true
@@ -392,7 +392,7 @@ properties:
           return Test-Path "$env:USERPROFILE\scoop" -Type Container
         SetScript: |
           Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/scoop.ps1 -OutFile "$env:USERPROFILE\Downloads\scoop.ps1"
-          $action = New-ScheduledTaskAction -Execute "powershell.exe -Command '$env:USERPROFILE\Downloads\scoop.ps1'"
+          $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "$env:USERPROFILE\Downloads\scoop.ps1"
           Register-ScheduledTask -TaskName "SetupScoop" -Action $action
           Start-ScheduledTask "SetupScoop"
           do {
