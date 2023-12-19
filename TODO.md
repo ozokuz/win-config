@@ -1,9 +1,5 @@
 # TODO
 
-## Package Management
-
-- Scoop
-
 ## Settings
 
 - Storage Sense off
@@ -22,7 +18,6 @@
 
 ## Utils
 
-- Starship
 - Sysinternals
 
 ## Apps
@@ -31,15 +26,6 @@
 
 ## Programming
 
-- VSCode
-- Visual Studio 2022
-- Git
-- GitHub CLI
-- LazyGit
-- NeoVim, ripgrep, fd, make, gcc
-- JetBrains Toolbox
-
-- NodeJS?
 - Docker?
 - VirtualBox?
 - WinSCP?
