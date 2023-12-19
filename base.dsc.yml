@@ -2,6 +2,19 @@
 properties:
   configurationVersion: "0.2.0"
   resources:
+    # Remove Bloat Default Apps
+    - resource: PSDscResources/Script
+      id: RemoveDefaultApps
+      directives:
+        description: Remove Bloat Default Apps
+      settings:
+        GetScript: |
+          return $true
+        TestScript: |
+          return $false
+        SetScript: |
+          $apps = @("Clipchamp","549981C3F5F10","BingNews","BingWeather","MicrosoftSolitaireCollection","MicrosoftStickyNotes","MicrosoftOfficeHub","Todos","WindowsFeedbackHub","WindowsMaps","WindowsSoundRecorder","QuickAssist","windowscommunicationsapps","GetHelp","Getstarted")
+          Get-AppxPackage -AllUsers | where {$name = $_.Name; ($apps | %{$name.Contains($_)}) -Contains $true} | Remove-AppxPackage -AllUsers
     # Settings
     # Enable Developer Mode
     - resource: Microsoft.Windows.Developer/DeveloperMode
@@ -206,6 +219,87 @@ properties:
         allowPrerelease: true
       settings:
         id: Nilesoft.Shell
+        source: winget
+    # Install Apps
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Discord
+      directives:
+        description: Install Discord
+        allowPrerelease: true
+      settings:
+        id: Discord.Discord
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Notion
+      directives:
+        description: Install Notion
+        allowPrerelease: true
+      settings:
+        id: Notion.Notion
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Obsidian
+      directives:
+        description: Install Obsidian
+        allowPrerelease: true
+      settings:
+        id: Obsidian.Obsidian
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: TickTick
+      directives:
+        description: Install TickTick
+        allowPrerelease: true
+      settings:
+        id: Appest.TickTick
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Authy
+      directives:
+        description: Install Authy
+        allowPrerelease: true
+      settings:
+        id: Twilio.Authy
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Bitwarden
+      directives:
+        description: Install Bitwarden
+        allowPrerelease: true
+      settings:
+        id: Bitwarden.Bitwarden
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Brave
+      directives:
+        description: Install Brave
+        allowPrerelease: true
+      settings:
+        id: Brave.Brave
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Chrome
+      directives:
+        description: Install Chrome
+        allowPrerelease: true
+      settings:
+        id: Google.Chrome
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Firefox
+      directives:
+        description: Install Firefox
+        allowPrerelease: true
+      settings:
+        id: Mozilla.Firefox
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: PaintNET
+      directives:
+        description: Install Paint.NET
+        allowPrerelease: true
+      settings:
+        id: dotPDNLLC.paintdotnet
         source: winget
     # Install Windows Features (Hyper-V, Hypervisor Platform, .NET 3.5 & WSL)
     - resource: PSDscResources/Script

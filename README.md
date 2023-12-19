@@ -9,4 +9,6 @@
 - Driver Updates
 - Setup Dev Drive
 - Run base winget configuration
-- Run device specific winget configuration if available
+- Install Store Apps
+  - Spotify
+  - WhatsApp

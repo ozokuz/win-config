@@ -1,8 +1,8 @@
-settings: explorer start in this pc
-apps: powertoys, everything
+# TODO
 
-install scoop
-scoop apps: neovim, winfetch, ripgrep, fd, make, gcc,
+## Package Management
+
+- Scoop
 
 ## Settings
 
@@ -22,34 +22,12 @@ scoop apps: neovim, winfetch, ripgrep, fd, make, gcc,
 
 ## Utils
 
-- 7-Zip
-- Power Toys
-- PowerShell
-- Everything
-- AltSnap
-- ShareX
-- Tailscale
-- EarTrumpet
-- WizTree
-- Nilesoft Shell
 - Starship
 - Sysinternals
 
 ## Apps
 
-- Discord
-- Notion
-- Obsidian
-- TickTick
-- Spotify
-- Authy
-- Bitwarden
-- Brave
-- Arc
-- Chrome
-- Firefox
-- WhatsApp
-- Paint.NET
+- GIMP
 
 ## Programming
 
