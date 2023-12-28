@@ -388,6 +388,22 @@ properties:
       settings:
         id: dotPDNLLC.paintdotnet
         source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: GIMP
+      directives:
+        description: Install GIMP
+        allowPrerelease: true
+      settings:
+        id: GIMP.GIMP
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Krita
+      directives:
+        description: Install Krita
+        allowPrerelease: true
+      settings:
+        id: KDE.Krita
+        source: winget
     # Install Dev Tools
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: Git
