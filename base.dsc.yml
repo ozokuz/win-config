@@ -470,6 +470,14 @@ properties:
       settings:
         id: JetBrains.Toolbox
         source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: VirtualBox
+      directives:
+        description: Install VirtualBox
+        allowPrerelease: true
+      settings:
+        id: Oracle.VirtualBox
+        source: winget
     # Install Scoop & Scoop apps
     - resource: PSDscResources/Script
       id: Scoop
