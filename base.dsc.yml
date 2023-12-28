@@ -252,6 +252,21 @@ properties:
       settings:
         id: AltSnap.AltSnap
         source: winget
+    - resource: PSDscResources/Script
+      id: AltSnapStartup
+      directives:
+        description: Autostart AltSnap
+      settings:
+        GetScript: |
+          return Get-ScheduledTask -TaskName "AltSnap"
+        TestScript: |
+          Get-ScheduledTask -TaskName "AltSnap"
+          return $?
+        SetScript: |
+          $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+          $trigger = New-ScheduledTaskTrigger -AtLogOn
+          $action = New-ScheduledTaskAction -Execute "C:\Users\Ozoku\AppData\Roaming\AltSnap\AltSnap.exe"
+          Register-ScheduledTask -TaskName "AltSnap" -Trigger $trigger -Action $action -RunLevel Highest -Settings $settings
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: ShareX
       directives:
