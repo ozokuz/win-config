@@ -557,3 +557,11 @@ properties:
             return $?
         SetScript: |
             wsl.exe --install
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Docker
+      directives:
+        description: Install Docker
+        allowPrerelease: true
+      settings:
+        id: Docker.DockerDesktop
+        source: winget
