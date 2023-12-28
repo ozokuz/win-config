@@ -1,11 +1,12 @@
 # TODO
 
+Split config to easily installable pieces
+
+- Main
+- Virtualization
+
 ## Settings
 
-- Storage Sense off
-- Alt+Tab Edge tabs off
-- Clipboard History on
-- 1.1.1.1 as DNS
 - Wallpaper
 - Disable Start Menu Recommendations
 - Taskbar Pins
@@ -16,16 +17,17 @@
 - Start Menu Folders
 - Hide Desktop Icons
 
-## Utils
-
-- Sysinternals
-
-## Apps
-
-- GIMP
-
 ## Programming
 
-- Docker?
-- VirtualBox?
-- WinSCP?
+- Docker.DockerDesktop
+
+## Configs
+
+- Powershell
+- Starship
+- NeoVim
+- IDEA Vim
+- VSCode?
+- Terminal?
+- PowerToys?
+- Git
