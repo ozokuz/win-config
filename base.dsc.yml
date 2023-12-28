@@ -478,6 +478,14 @@ properties:
       settings:
         id: Oracle.VirtualBox
         source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: WinSCP
+      directives:
+        description: Install WinSCP
+        allowPrerelease: true
+      settings:
+        id: WinSCP.WinSCP
+        source: winget
     # Install Scoop & Scoop apps
     - resource: PSDscResources/Script
       id: Scoop
