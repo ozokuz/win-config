@@ -102,6 +102,11 @@ properties:
         GetScript: |
           $dotConfig = Test-Path "$env:USERPROFILE\.config" -Type Container
           $tools = Test-Path "$env:USERPROFILE\Tools" -Type Container
+          $packages = Test-Path "D:\packages" -Type Container
+          $npm = Test-Path "D:\packages\npm" -Type Container
+          $pip = Test-Path "D:\packages\pip" -Type Container
+          $cargo = Test-Path "D:\packages\cargo" -Type Container
+          $maven = Test-Path "D:\packages\maven" -Type Container
           $src = Test-Path "D:\src" -Type Container
           $srcp = Test-Path "D:\src\p" -Type Container
           $srcs = Test-Path "D:\src\s" -Type Container
@@ -109,6 +114,11 @@ properties:
           return ${
             dotConfig = $dotConfig;
             tools = $tools;
+            packages = $packages;
+            npm = $npm;
+            pip = $pip;
+            cargo = $cargo;
+            maven = $maven;
             src = $src;
             srcp = $srcp;
             srcs = $srcs;
@@ -117,14 +127,24 @@ properties:
         TestScript: |
           $dotConfig = Test-Path "$env:USERPROFILE\.config" -Type Container
           $tools = Test-Path "$env:USERPROFILE\Tools" -Type Container
+          $packages = Test-Path "D:\packages" -Type Container
+          $npm = Test-Path "D:\packages\npm" -Type Container
+          $pip = Test-Path "D:\packages\pip" -Type Container
+          $cargo = Test-Path "D:\packages\cargo" -Type Container
+          $maven = Test-Path "D:\packages\maven" -Type Container
           $src = Test-Path "D:\src" -Type Container
           $srcp = Test-Path "D:\src\p" -Type Container
           $srcs = Test-Path "D:\src\s" -Type Container
           $srcNrth = Test-Path "D:\src\nrth" -Type Container
-          return $dotConfig -and $tools -and $src -and $srcp -and $srcs -and $srcNrth
+          return $dotConfig -and $tools -and $packages -and $npm -and $pip -and $cargo -and $maven -and $src -and $srcp -and $srcs -and $srcNrth
         SetScript: |
           mkdir "$env:USERPROFILE\.config" -ErrorAction SilentlyContinue
           mkdir "$env:USERPROFILE\Tools" -ErrorAction SilentlyContinue
+          mkdir "D:\packages" -ErrorAction SilentlyContinue
+          mkdir "D:\packages\npm" -ErrorAction SilentlyContinue
+          mkdir "D:\packages\pip" -ErrorAction SilentlyContinue
+          mkdir "D:\packages\cargo" -ErrorAction SilentlyContinue
+          mkdir "D:\packages\maven" -ErrorAction SilentlyContinue
           mkdir "D:\src" -ErrorAction SilentlyContinue
           mkdir "D:\src\p" -ErrorAction SilentlyContinue
           mkdir "D:\src\s" -ErrorAction SilentlyContinue
