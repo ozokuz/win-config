@@ -81,6 +81,18 @@ properties:
         allowPrerelease: true
       settings:
         Ensure: Present
+    # Disable Storage Sense
+    - resource: PSDscResources/Registry
+      id: StorageSense
+      directives:
+        description: Disable Storage Sense
+      settings:
+        Key: "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\StorageSense"
+        ValueName: AllowStorageSenseGlobal
+        Ensure: Present
+        Force: true
+        ValueData: 0
+        ValueType: DWord
     # Setup Folder Structure
     - resource: PSDscResources/Script
       id: FolderStructure
