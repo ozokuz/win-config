@@ -296,7 +296,7 @@ properties:
         GetScript: |
           return Get-ScheduledTask -TaskName "AltSnap"
         TestScript: |
-          Get-ScheduledTask -TaskName "AltSnap"
+          Get-ScheduledTask -TaskName "AltSnap" -ErrorAction SilentlyContinue
           return $?
         SetScript: |
           $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
