@@ -81,6 +81,18 @@ properties:
         allowPrerelease: true
       settings:
         Ensure: Present
+    # File Explorer starts to This PC
+    - resource: PSDscResources/Registry
+      id: ExplorerThisPC
+      directives:
+        description: File Explorer starts to This PC
+      settings:
+        Key: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced"
+        ValueName: LaunchTo
+        ValueType: DWord
+        ValueData: 1
+        Ensure: Present
+        Force: true
     # Disable Storage Sense
     - resource: PSDscResources/Registry
       id: StorageSense
