@@ -7,10 +7,6 @@
 - Default Browser
 - Start Menu Folders
 
-## Programming
-
-- Docker.DockerDesktop
-
 ## Configs
 
 - Powershell
