@@ -16,6 +16,8 @@
 - Pin Start Menu Items
 - Alt+Tab Edge tabs off
 - Enable Clipboard History
+- Terminal as Default
+- Set Wallpaper
 - Install Docker
 - WSL Configuration
 - Phone Link

@@ -7,15 +7,10 @@ Split config to easily installable pieces
 
 ## Settings
 
-- Wallpaper
-- Disable Start Menu Recommendations
 - Taskbar Pins
 - FiraCode Font
 - Default Browser
-- File Explorer opens to This PC
-- Terminal as Default
 - Start Menu Folders
-- Hide Desktop Icons
 
 ## Programming
 
