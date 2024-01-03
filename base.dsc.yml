@@ -93,6 +93,18 @@ properties:
         ValueData: 1
         Ensure: Present
         Force: true
+    # Hide Desktop Icons
+    - resource: PSDscResources/Registry
+      id: HideIcons
+      directives:
+        description: Hide Desktop Icons
+      settings:
+        Key: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced"
+        ValueName: HideIcons
+        ValueType: DWord
+        ValueData: 1
+        Ensure: Present
+        Force: true
     # Disable Storage Sense
     - resource: PSDscResources/Registry
       id: StorageSense
