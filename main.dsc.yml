@@ -29,7 +29,7 @@ properties:
         TestScript: |
           return $false
         SetScript: |
-          $apps = @("Clipchamp","549981C3F5F10","BingNews","BingWeather","MicrosoftSolitaireCollection","MicrosoftStickyNotes","MicrosoftOfficeHub","Todos","WindowsFeedbackHub","WindowsMaps","WindowsSoundRecorder","QuickAssist","windowscommunicationsapps","GetHelp","Getstarted")
+          $apps = @("Clipchamp","549981C3F5F10","BingNews","BingWeather","MicrosoftStickyNotes","MicrosoftOfficeHub","Todos","WindowsFeedbackHub","WindowsMaps","WindowsSoundRecorder","QuickAssist","windowscommunicationsapps","GetHelp","Getstarted")
           Get-AppxPackage -AllUsers | where {$name = $_.Name; ($apps | %{$name.Contains($_)}) -Contains $true} | Remove-AppxPackage -AllUsers
     # Settings
     # Enable Developer Mode
