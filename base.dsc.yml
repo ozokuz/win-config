@@ -113,6 +113,8 @@ properties:
       settings:
         Key: "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\StorageSense"
         ValueName: AllowStorageSenseGlobal
+        ValueType: DWord
+        ValueData: 0
         Ensure: Present
         Force: true
     # Download Wallpaper
