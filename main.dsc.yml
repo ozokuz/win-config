@@ -393,12 +393,12 @@ properties:
         id: Bitwarden.Bitwarden
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: Brave
+      id: Vivaldi
       directives:
-        description: Install Brave
+        description: Install Vivaldi
         allowPrerelease: true
       settings:
-        id: Brave.Brave
+        id: VivaldiTechnologies.Vivaldi
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: Chrome
