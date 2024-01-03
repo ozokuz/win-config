@@ -1,10 +1,5 @@
 # TODO
 
-Split config to easily installable pieces
-
-- Main
-- Virtualization
-
 ## Settings
 
 - Taskbar Pins

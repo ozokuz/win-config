@@ -507,14 +507,6 @@ properties:
         id: JetBrains.Toolbox
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: VirtualBox
-      directives:
-        description: Install VirtualBox
-        allowPrerelease: true
-      settings:
-        id: Oracle.VirtualBox
-        source: winget
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: WinSCP
       directives:
         description: Install WinSCP
@@ -547,57 +539,3 @@ properties:
           } until ($scoopComplete)
           Unregister-ScheduledTask "SetupScoop" -Confirm:$false
           Remove-Item "$env:USERPROFILE\Downloads\scoop.ps1"
-    # Install Windows Features (Hyper-V, Hypervisor Platform, .NET 3.5 & WSL)
-    - resource: PSDscResources/Script
-      id: HyperV
-      directives:
-        description: Install Hyper-V
-      settings:
-        GetScript: |
-          return DISM /Online /Get-FeatureInfo /FeatureName:Microsoft-Hyper-V
-        TestScript:
-          return (DISM /Online /Get-FeatureInfo /FeatureName:Microsoft-Hyper-V | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
-        SetScript: |
-          DISM /Online /Enable-Feature /FeatureName:Microsoft-Hyper-V /All /NoRestart
-    - resource: PSDscResources/Script
-      id: HypervisorPlatform
-      directives:
-        description: Enable Windows Hypervisor Platform
-      settings:
-        GetScript: |
-          return DISM /Online /Get-FeatureInfo HypervisorPlatform
-        TestScript:
-          return (DISM /Online /Get-FeatureInfo /FeatureName:HypervisorPlatform | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
-        SetScript: |
-          DISM /Online /Enable-Feature /FeatureName:HypervisorPlatform /NoRestart
-    - resource: PSDscResources/Script
-      id: NetFx3
-      directives:
-        description: Install .NET 3.5
-      settings:
-        GetScript: |
-          return DISM /Online /Get-FeatureInfo NetFx3
-        TestScript:
-          return (DISM /Online /Get-FeatureInfo /FeatureName:NetFx3 | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
-        SetScript: |
-          DISM /Online /Enable-Feature /FeatureName:NetFx3 /NoRestart
-    - resource: PSDscResources/Script
-      id: WSL
-      directives:
-        description: Install WSL
-      settings:
-        GetScript: |
-            return wsl.exe -l -q
-        TestScript: |
-            wsl.exe -l -q | where-object {$_ -eq "Ubuntu"}
-            return $?
-        SetScript: |
-            wsl.exe --install
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: Docker
-      directives:
-        description: Install Docker
-        allowPrerelease: true
-      settings:
-        id: Docker.DockerDesktop
-        source: winget
