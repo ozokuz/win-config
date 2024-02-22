@@ -3,34 +3,36 @@ properties:
   configurationVersion: "0.2.0"
   resources:
     # Set PowerShell Execution Policy
-    - resource: PSDscResources/Script
+    - resource: Ozoku.Settings/PowerShellExecutionPolicy
       id: ExecutionPolicy
       directives:
         description: Set PowerShell Execution Policy
-      settings:
-        GetScript: |
-          return $true
-        TestScript: |
-          return $false
-        SetScript: |
-          $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
-          Register-ScheduledTask -TaskName "ExecutionPolicy" -Action $action
-          Start-ScheduledTask "ExecutionPolicy"
-          Start-Sleep 2
-          Unregister-ScheduledTask "ExecutionPolicy" -Confirm:$false
-    # Remove Bloat Default Apps
-    - resource: PSDscResources/Script
+    # Remove Default App Bloat
+    - resource: Ozoku.Debloat/RemoveDefaultApps
       id: RemoveDefaultApps
       directives:
-        description: Remove Bloat Default Apps
+        description: Remove Default App Bloat
+    # Install Scoop & Buckets
+    - resource: Ozoku.Scoop/InstallScoop
+      id: Scoop
+      directives:
+        description: Install Scoop
+    - resource: Ozoku.Scoop/ScoopBucket
+      id: ExtrasBucket
+      dependsOn:
+        - Scoop
+      directives:
+        description: Add Extras bucket
       settings:
-        GetScript: |
-          return $true
-        TestScript: |
-          return $false
-        SetScript: |
-          $apps = @("Clipchamp","549981C3F5F10","BingNews","BingWeather","MicrosoftStickyNotes","MicrosoftOfficeHub","Todos","WindowsFeedbackHub","WindowsMaps","WindowsSoundRecorder","QuickAssist","windowscommunicationsapps","GetHelp","Getstarted")
-          Get-AppxPackage -AllUsers | where {$name = $_.Name; ($apps | %{$name.Contains($_)}) -Contains $true} | Remove-AppxPackage -AllUsers
+        Name: extras
+    - resource: Ozoku.Scoop/ScoopBucket
+      id: GamesBucket
+      dependsOn:
+        - Scoop
+      directives:
+        description: Add Games bucket
+      settings:
+        Name: games
     # Settings
     # Enable Developer Mode
     - resource: Microsoft.Windows.Developer/DeveloperMode
@@ -40,39 +42,50 @@ properties:
         allowPrerelease: true
       settings:
         Ensure: Present
-    # Show File Extensions
-    - resource: Microsoft.Windows.Developer/HideFileExtensions
-      id: ShowFileExtensions
+    # File Explorer Settings
+    - resource: Microsoft.Windows.Developer/WindowsExplorer
+      id: FileExplorerSettings
       directives:
-        description: Show File Extensions
+        description: File Explorer Settings
         allowPrerelease: true
       settings:
-        Ensure: Absent
-    # Hide Task View Button
-    - resource: Microsoft.Windows.Developer/ShowTaskViewButton
-      id: StupidTaskViewDSCBug
+        FileExtensions: Show
+        HiddenFiles: Show
+        RestartExplorer: true
+    # Custom Explorer Settings
+    - resource: Ozoku.Settings/Explorer
+      id: ExplorerSettings
       directives:
-        description: Stupid Task View Button Setting Bug
+        description: Custom Explorer Settings
+      settings:
+        LaunchTo: ThisPC
+        DesktopIcons: Hide
+    # Custom System Settings
+    - resource: Ozoku.Settings/System
+      id: SystemSettings
+      directives:
+        description: Custom System Settings
+      settings:
+        StorageSense: Disable
+    # Custom Registry Tweaks
+    - resource: Ozoku.Settings/RegistryTweaks
+      id: RegistryTweaks
+      directives:
+        description: Custom Registry Tweaks
+      settings:
+        LongPaths: Enable
+        UTCTime: Enable
+    # Taskbar Settings
+    - resource: Microsoft.Windows.Developer/Taskbar
+      id: TaskbarSettings
+      directives:
+        description: Taskbar Settings
         allowPrerelease: true
       settings:
-        Ensure: Present
-    - resource: Microsoft.Windows.Developer/ShowTaskViewButton
-      id: HideTaskView
-      directives:
-        description: Hide Task View Button
-        allowPrerelease: true
-      dependsOn:
-        - StupidTaskViewDSCBug
-      settings:
-        Ensure: Absent
-    # Show Hidden Files
-    - resource: Microsoft.Windows.Developer/ShowHiddenFiles
-      id: ShowHiddenFiles
-      directives:
-        description: Show Hidden Files
-        allowPrerelease: true
-      settings:
-        Ensure: Present
+        SearchboxMode: Hide
+        TaskViewButton: Hide
+        WidgetsButton: Hide
+        RestartExplorer: true
     # Enable Dark Mode
     - resource: Microsoft.Windows.Developer/EnableDarkMode
       id: EnableDarkMode
@@ -81,148 +94,50 @@ properties:
         allowPrerelease: true
       settings:
         Ensure: Present
-    # File Explorer starts to This PC
-    - resource: PSDscResources/Registry
-      id: ExplorerThisPC
+        RestartExplorer: true
+    # Run O&O Shutup 10++
+    - resource: Ozoku.Debloat/RunOOSU
+      id: OOSU
       directives:
-        description: File Explorer starts to This PC
-      settings:
-        Key: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced"
-        ValueName: LaunchTo
-        ValueType: DWord
-        ValueData: 1
-        Ensure: Present
-        Force: true
-    # Hide Desktop Icons
-    - resource: PSDscResources/Registry
-      id: HideIcons
-      directives:
-        description: Hide Desktop Icons
-      settings:
-        Key: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced"
-        ValueName: HideIcons
-        ValueType: DWord
-        ValueData: 1
-        Ensure: Present
-        Force: true
-    # Disable Storage Sense
-    - resource: PSDscResources/Registry
-      id: StorageSense
-      directives:
-        description: Disable Storage Sense
-      settings:
-        Key: "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\StorageSense"
-        ValueName: AllowStorageSenseGlobal
-        ValueType: DWord
-        ValueData: 0
-        Ensure: Present
-        Force: true
-    # Download Wallpaper
-    - resource: PSDscResources/Script
-      id: Wallpaper
-      directives:
-        description: Download Wallpaper
-      settings:
-        GetScript: |
-          return $false
-        TestScript: |
-          return $false
-        SetScript: |
-          Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/wallpaper.png -OutFile "$env:USERPROFILE\Pictures\wallpaper.png"
+        description: Run OOSU
     # Setup Folder Structure
-    - resource: PSDscResources/Script
+    - resource: Ozoku.Folders/FolderStructure
       id: FolderStructure
       directives:
         description: Setup Folder Structure
       settings:
-        GetScript: |
-          $dotConfig = Test-Path "$env:USERPROFILE\.config" -Type Container
-          $tools = Test-Path "$env:USERPROFILE\Tools" -Type Container
-          $packages = Test-Path "D:\packages" -Type Container
-          $npm = Test-Path "D:\packages\npm" -Type Container
-          $pip = Test-Path "D:\packages\pip" -Type Container
-          $cargo = Test-Path "D:\packages\cargo" -Type Container
-          $maven = Test-Path "D:\packages\maven" -Type Container
-          $src = Test-Path "D:\src" -Type Container
-          $srcp = Test-Path "D:\src\p" -Type Container
-          $srcs = Test-Path "D:\src\s" -Type Container
-          $srcNrth = Test-Path "D:\src\nrth" -Type Container
-          return ${
-            dotConfig = $dotConfig;
-            tools = $tools;
-            packages = $packages;
-            npm = $npm;
-            pip = $pip;
-            cargo = $cargo;
-            maven = $maven;
-            src = $src;
-            srcp = $srcp;
-            srcs = $srcs;
-            srcNrth = $srcNrth
-          }
-        TestScript: |
-          $dotConfig = Test-Path "$env:USERPROFILE\.config" -Type Container
-          $tools = Test-Path "$env:USERPROFILE\Tools" -Type Container
-          $packages = Test-Path "D:\packages" -Type Container
-          $npm = Test-Path "D:\packages\npm" -Type Container
-          $pip = Test-Path "D:\packages\pip" -Type Container
-          $cargo = Test-Path "D:\packages\cargo" -Type Container
-          $maven = Test-Path "D:\packages\maven" -Type Container
-          $src = Test-Path "D:\src" -Type Container
-          $srcp = Test-Path "D:\src\p" -Type Container
-          $srcs = Test-Path "D:\src\s" -Type Container
-          $srcNrth = Test-Path "D:\src\nrth" -Type Container
-          return $dotConfig -and $tools -and $packages -and $npm -and $pip -and $cargo -and $maven -and $src -and $srcp -and $srcs -and $srcNrth
-        SetScript: |
-          mkdir "$env:USERPROFILE\.config" -ErrorAction SilentlyContinue
-          mkdir "$env:USERPROFILE\Tools" -ErrorAction SilentlyContinue
-          mkdir "D:\packages" -ErrorAction SilentlyContinue
-          mkdir "D:\packages\npm" -ErrorAction SilentlyContinue
-          mkdir "D:\packages\pip" -ErrorAction SilentlyContinue
-          mkdir "D:\packages\cargo" -ErrorAction SilentlyContinue
-          mkdir "D:\packages\maven" -ErrorAction SilentlyContinue
-          mkdir "D:\src" -ErrorAction SilentlyContinue
-          mkdir "D:\src\p" -ErrorAction SilentlyContinue
-          mkdir "D:\src\s" -ErrorAction SilentlyContinue
-          mkdir "D:\src\nrth" -ErrorAction SilentlyContinue
-    # Run O&O Shutup 10++
-    - resource: PSDscResources/Script
-      id: OOSU
-      dependsOn:
-        - FolderStructure
-      directives:
-        description: Run OOSU
-      settings:
-        GetScript: |
-          return $true
-        TestScript: |
-          return $false
-        SetScript: |
-          Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/oosu.ps1 -OutFile "$env:USERPROFILE\Downloads\oosu.ps1"
-          powershell.exe -Command "$env:USERPROFILE\Downloads\oosu.ps1"
+        Folders:
+          - "$env:USERPROFILE\\.config"
+          - "$env:USERPROFILE\\Tools"
+          - "D:\\packages"
+          - "D:\\packages\\npm"
+          - "D:\\packages\\pip"
+          - "D:\\packages\\cargo"
+          - "D:\\packages\\maven"
+          - "D:\\src"
+          - "D:\\src\\p"
+          - "D:\\src\\s"
+          - "D:\\src\\nrth"
     # Setup Quick Access Pins
-    - resource: PSDscResources/Script
+    - resource: Ozoku.Folders/QuickAccess
       id: QuickAccess
       dependsOn:
         - FolderStructure
       directives:
         description: Setup Quick Access Pins
       settings:
-        GetScript: |
-          $o = new-object -com shell.application
-          $pins = @("$env:USERNAME","src","Downloads","Documents","Tools","Recycle Bin")
-          return ($o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items() | where {$_.name -notin $pins})
-        TestScript: |
-          $o = new-object -com shell.application
-          $pins = @("$env:USERNAME","src","Downloads","Documents","Tools","Recycle Bin")
-          $count = ($o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items() | where {$_.name -notin $pins} | measure).Count
-          return $count -eq 0
-        SetScript: |
-          $o = new-object -com shell.application
-          $allowedPins = @("$env:USERNAME","src","Downloads","Documents","Tools","Recycle Bin")
-          $o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items() | where {$_.name -notin $allowedPins} | foreach-object {$_.InvokeVerb("unpinfromhome")}
-          $pins = @("$env:USERPROFILE", "D:\src", "$env:USERPROFILE\Tools", "::{645FF040-5081-101B-9F08-00AA002F954E}")
-          $pins | foreach-object {$o.Namespace($_).Self.InvokeVerb("pintohome")}
+        UserFolder: true
+        Downloads: true
+        Documents: true
+        RecycleBin: true
+        Desktop: false
+        Pictures: false
+        Videos: false
+        Music: false
+        OtherPins:
+          - "D:\\src"
+          - "$env:USERPROFILE\\Tools"
+          - "F:\\Vault"
     # Install Utils (7-Zip, PowerToys, PowerShell, Everything, AltSnap, ShareX, Tailscale, EarTrumpet, WizTree & Nilesoft Shell)
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: 7Zip
@@ -288,21 +203,18 @@ properties:
       settings:
         id: AltSnap.AltSnap
         source: winget
-    - resource: PSDscResources/Script
+    - resource: Ozoku.Startup/CreateStartupTask
       id: AltSnapStartup
+      dependsOn:
+        - AltSnap
       directives:
         description: Autostart AltSnap
       settings:
-        GetScript: |
-          return Get-ScheduledTask -TaskName "AltSnap"
-        TestScript: |
-          Get-ScheduledTask -TaskName "AltSnap" -ErrorAction SilentlyContinue
-          return $?
-        SetScript: |
-          $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
-          $trigger = New-ScheduledTaskTrigger -AtLogOn
-          $action = New-ScheduledTaskAction -Execute "C:\Users\Ozoku\AppData\Roaming\AltSnap\AltSnap.exe"
-          Register-ScheduledTask -TaskName "AltSnap" -Trigger $trigger -Action $action -RunLevel Highest -Settings $settings
+        Name: AltSnap
+        Command: "C:\\Users\\Ozoku\\AppData\\Roaming\\AltSnap\\AltSnap.exe"
+        RunLevel: Highest
+        Ensure: Present
+        Type: User
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: ShareX
       directives:
@@ -377,14 +289,6 @@ properties:
         id: Appest.TickTick
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: Authy
-      directives:
-        description: Install Authy
-        allowPrerelease: true
-      settings:
-        id: Twilio.Authy
-        source: winget
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: Bitwarden
       directives:
         description: Install Bitwarden
@@ -393,12 +297,12 @@ properties:
         id: Bitwarden.Bitwarden
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: Vivaldi
+      id: Brave
       directives:
-        description: Install Vivaldi
+        description: Install Brave
         allowPrerelease: true
       settings:
-        id: VivaldiTechnologies.Vivaldi
+        id: Brave.Brave
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: Chrome
@@ -442,14 +346,6 @@ properties:
         source: winget
     # Install Dev Tools
     - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: Git
-      directives:
-        description: Install Git
-        allowPrerelease: true
-      settings:
-        id: Git.Git
-        source: winget
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: VSCode
       directives:
         description: Install Visual Studio Code
@@ -465,22 +361,10 @@ properties:
       settings:
         id: Microsoft.VisualStudio.2022.Community
         source: winget
-    - resource: PSDscResources/Script
-      id: VSConfig
-      directives:
-        description: Download VSConfig
-      settings:
-        GetScript: |
-          return $true
-        TestScript: |
-          return Test-Path "$env:USERPROFILE\Downloads\vsconfig"
-        SetScript: |
-          Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/.vsconfig -OutFile "$env:USERPROFILE\Downloads\.vsconfig"
     - resource: Microsoft.VisualStudio.DSC/VSComponents
       id: VSWorkloads
       dependsOn:
         - VS2022
-        - VSConfig
       directives:
         description: Install VS workloads from VSConfig
         maxVersion: "1.0.15"
@@ -488,7 +372,7 @@ properties:
       settings:
         productId: Microsoft.VisualStudio.Product.Community
         channelId: VisualStudio.17.Release
-        vsConfigFile: '${WinGetConfigRoot}\.vsconfig'
+        vsConfigFile: '${WinGetConfigRoot}\configs\.vsconfig'
         includeRecommended: true
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: GitHubCLI
@@ -514,28 +398,129 @@ properties:
       settings:
         id: WinSCP.WinSCP
         source: winget
-    # Install Scoop & Scoop apps
-    - resource: PSDscResources/Script
-      id: Scoop
-      dependsOn:
-        - Git
+    - resource: Ozoku.WSL/InstallWSL
+      id: WSL
       directives:
-        description: Install Scoop
+        description: Install WSL
       settings:
-        GetScript: |
-          return $true
-        TestScript: |
-          return Test-Path "$env:USERPROFILE\scoop" -Type Container
-        SetScript: |
-          Invoke-RestMethod https://raw.githubusercontent.com/ozokuz/win-config/main/scoop.ps1 -OutFile "$env:USERPROFILE\Downloads\scoop.ps1"
-          $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "$env:USERPROFILE\Downloads\scoop.ps1"
-          Register-ScheduledTask -TaskName "SetupScoop" -Action $action
-          Start-ScheduledTask "SetupScoop"
-          do {
-            $scoopComplete = Test-Path "$env:USERPROFILE\scoop\shims\wget.exe"
-            if (-not ($scoopComplete)) {
-              Start-Sleep 1
-            }
-          } until ($scoopComplete)
-          Unregister-ScheduledTask "SetupScoop" -Confirm:$false
-          Remove-Item "$env:USERPROFILE\Downloads\scoop.ps1"
+        Ensure: Present
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Docker
+      directives:
+        description: Install Docker
+        allowPrerelease: true
+      settings:
+        id: Docker.DockerDesktop
+        source: winget
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Bat
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Bat
+      settings:
+        Name: bat
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Fd
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Fd
+      settings:
+        Name: fd
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Fzf
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Fzf
+      settings:
+        Name: fzf
+    - resource: Ozoku.Scoop/ScoopApp
+      id: GCC
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install GCC
+      settings:
+        Name: gcc
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Grep
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Grep
+      settings:
+        Name: grep
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Lazygit
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Lazygit
+      settings:
+        Name: lazygit
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Make
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Make
+      settings:
+        Name: make
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Neovim
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Neovim
+      settings:
+        Name: neovim
+    - resource: Ozoku.Scoop/ScoopApp
+      id: NodeJS
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install NodeJS
+      settings:
+        Name: nodejs-lts
+    - resource: Ozoku.Scoop/ScoopApp
+      id: PNPM
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install PNPM
+      settings:
+        Name: pnpm
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Python
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Python
+      settings:
+        Name: python
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Ripgrep
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Ripgrep
+      settings:
+        Name: ripgrep
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Starship
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Starship
+      settings:
+        Name: starship
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Wget
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Wget
+      settings:
+        Name: wget

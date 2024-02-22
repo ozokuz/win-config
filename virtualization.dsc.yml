@@ -2,15 +2,7 @@
 properties:
   configurationVersion: "0.2.0"
   resources:
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: VirtualBox
-      directives:
-        description: Install VirtualBox
-        allowPrerelease: true
-      settings:
-        id: Oracle.VirtualBox
-        source: winget
-    # Install Windows Features (Hyper-V, Hypervisor Platform & WSL)
+    # Install Windows Features (Hyper-V & Hypervisor Platform)
     - resource: PSDscResources/Script
       id: HyperV
       directives:
@@ -18,8 +10,7 @@ properties:
       settings:
         GetScript: |
           return DISM /Online /Get-FeatureInfo /FeatureName:Microsoft-Hyper-V
-        TestScript:
-          return (DISM /Online /Get-FeatureInfo /FeatureName:Microsoft-Hyper-V | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
+        TestScript: return (DISM /Online /Get-FeatureInfo /FeatureName:Microsoft-Hyper-V | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
         SetScript: |
           DISM /Online /Enable-Feature /FeatureName:Microsoft-Hyper-V /All /NoRestart
     - resource: PSDscResources/Script
@@ -29,27 +20,15 @@ properties:
       settings:
         GetScript: |
           return DISM /Online /Get-FeatureInfo HypervisorPlatform
-        TestScript:
-          return (DISM /Online /Get-FeatureInfo /FeatureName:HypervisorPlatform | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
+        TestScript: return (DISM /Online /Get-FeatureInfo /FeatureName:HypervisorPlatform | Select-String "State ").ToString().Split(":")[1].Trim() -eq "Enabled"
         SetScript: |
           DISM /Online /Enable-Feature /FeatureName:HypervisorPlatform /NoRestart
-    - resource: PSDscResources/Script
-      id: WSL
-      directives:
-        description: Install WSL
-      settings:
-        GetScript: |
-            return wsl.exe -l -q
-        TestScript: |
-            wsl.exe -l -q | where-object {$_ -eq "Ubuntu"}
-            return $?
-        SetScript: |
-            wsl.exe --install
+    # Install VirtualBox
     - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: Docker
+      id: VirtualBox
       directives:
-        description: Install Docker
+        description: Install VirtualBox
         allowPrerelease: true
       settings:
-        id: Docker.DockerDesktop
+        id: Oracle.VirtualBox
         source: winget
