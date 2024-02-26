@@ -413,6 +413,14 @@ properties:
       settings:
         Name: bat
     - resource: Ozoku.Scoop/ScoopApp
+      id: Eza
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Eza
+      settings:
+        Name: eza
+    - resource: Ozoku.Scoop/ScoopApp
       id: Fd
       dependsOn:
         - Scoop
@@ -516,3 +524,11 @@ properties:
         description: Install Wget
       settings:
         Name: wget
+    - resource: Ozoku.Scoop/ScoopApp
+      id: Zoxide
+      dependsOn:
+        - Scoop
+      directives:
+        description: Install Zoxide
+      settings:
+        Name: zoxide
