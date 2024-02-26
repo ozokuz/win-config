@@ -46,7 +46,7 @@ class InstallScoop {
       } until ($scoopComplete)
       Unregister-ScheduledTask "SetupScoop" -Confirm:$false
     }
-    else {
+    elseif ($this.IsInstalled -and $this.Ensure -eq [Ensure]::Absent) {
       Remove-Item -Path "$env:USERPROFILE\scoop" -Recurse -Force
     }
   }
@@ -86,7 +86,7 @@ class ScoopBucket {
     if (!($this.IsInstalled) -and $this.Ensure -eq [Ensure]::Present) {
       scoop bucket add $this.Name
     }
-    else {
+    elseif ($this.IsInstalled -and $this.Ensure -eq [Ensure]::Absent) {
       scoop bucket rm $this.Name
     }
   }
@@ -126,7 +126,7 @@ class ScoopApp {
     if (!($this.IsInstalled) -and $this.Ensure -eq [Ensure]::Present) {
       scoop install $this.Name
     }
-    else {
+    elseif ($this.IsInstalled -and $this.Ensure -eq [Ensure]::Absent) {
       scoop uninstall $this.Name
     }
   }
