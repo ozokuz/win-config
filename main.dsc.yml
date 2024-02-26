@@ -25,14 +25,6 @@ properties:
         description: Add Extras bucket
       settings:
         Name: extras
-    - resource: Ozoku.Scoop/ScoopBucket
-      id: GamesBucket
-      dependsOn:
-        - Scoop
-      directives:
-        description: Add Games bucket
-      settings:
-        Name: games
     # Settings
     # Enable Developer Mode
     - resource: Microsoft.Windows.Developer/DeveloperMode
