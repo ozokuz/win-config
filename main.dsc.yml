@@ -540,3 +540,44 @@ properties:
         description: Install Zoxide
       settings:
         Name: zoxide
+    # Games
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Steam
+      directives:
+        description: Install Steam
+        allowPrerelease: true
+      settings:
+        id: Valve.Steam
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: EpicGames
+      directives:
+        description: Install Epic Games Launcher
+        allowPrerelease: true
+      settings:
+        id: EpicGames.EpicGamesLauncher
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Java8
+      directives:
+        description: Install Java 8
+        allowPrerelease: true
+      settings:
+        id: EclipseAdoptium.Temurin.8.JRE
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Java17
+      directives:
+        description: Install Java 17
+        allowPrerelease: true
+      settings:
+        id: EclipseAdoptium.Temurin.17.JDK
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: PrismLauncher
+      directives:
+        description: Install PrismLauncher
+        allowPrerelease: true
+      settings:
+        id: PrismLauncher.PrismLauncher
+        source: winget
