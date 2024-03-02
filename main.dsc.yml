@@ -188,6 +188,14 @@ properties:
         id: voidtools.Everything
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: EverythingPowerToys
+      directives:
+        description: Install EverythingPowerToys
+        allowPrerelease: true
+      settings:
+        id: lin-ycv.EverythingPowerToys
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: AltSnap
       directives:
         description: Install AltSnap
