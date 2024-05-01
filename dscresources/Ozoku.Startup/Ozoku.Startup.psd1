@@ -1,7 +1,7 @@
 @{
   RootModule           = 'Ozoku.Startup.psm1'
   ModuleVersion        = '0.0.1'
-  GUID                 = 'f39b2776-4a70-4b72-b5ca-cea81311af1e'
+  GUID                 = '61a87621-97bf-4a81-b5c4-bbbff94d7481'
   Author               = 'Ozoku'
   CompanyName          = 'Ozoku'
   Copyright            = '(c) Ozoku. MIT License'

@@ -1,7 +1,7 @@
 @{
   RootModule           = 'Ozoku.Scoop.psm1'
   ModuleVersion        = '0.0.1'
-  GUID                 = ''
+  GUID                 = '89332cfd-0ecf-4c46-9a52-06016ae54c58'
   Author               = 'Ozoku'
   CompanyName          = 'Ozoku'
   Copyright            = '(c) Ozoku. MIT License'
