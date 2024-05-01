@@ -7,12 +7,13 @@ if (-not (Test-Path -Path $env:USERPROFILE\win-config)) {
 }
 
 if (-not(Test-Path -Path $env:LOCALAPPDATA\Microsoft\WinGet\Configuration\Modules)) {
-  mkdir -Force $env:LOCALAPPDATA\Microsoft\WinGet\Configuration
+  mkdir -Force $env:LOCALAPPDATA\Microsoft\WinGet\Configuration\Modules
 }
 
 Get-ChildItem $env:USERPROFILE\win-config\dscresources | ForEach-Object {
-  if (-not(Test-Path -Path $env:LOCALAPPDATA\Microsoft\WinGet\Configuration\Modules\$_.BaseName)) {
-    New-Item -Type SymbolicLink -Value $_.FullName -Path $env:LOCALAPPDATA\Microsoft\WinGet\Configuration\Modules\$_.BaseName
+  $module = $_.BaseName
+  if (-not(Test-Path -Path $env:LOCALAPPDATA\Microsoft\WinGet\Configuration\Modules\$module)) {
+    New-Item -Type SymbolicLink -Value $_.FullName -Path $env:LOCALAPPDATA\Microsoft\WinGet\Configuration\Modules\$module
   }
 }
 
