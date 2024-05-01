@@ -7,5 +7,5 @@
   Copyright            = '(c) Ozoku. MIT License'
   Description          = 'This module contains DSC resources for configuring Windows settings.'
   PowerShellVersion    = '7.2'
-  DscResourcesToExport = @('Explorer', 'System')
+  DscResourcesToExport = @('Explorer', 'System', 'PowerShellExecutionPolicy', 'RegistryTweaks')
 }

@@ -7,5 +7,5 @@
   Copyright            = '(c) Ozoku. MIT License'
   Description          = 'This module contains a DSC resource for creating symlinked configuration files.'
   PowerShellVersion    = '7.2'
-  DscResourcesToExport = @('CreateSymlink')
+  DscResourcesToExport = @('Symlink')
 }
