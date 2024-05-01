@@ -39,7 +39,7 @@ class InstallScoop {
       Start-ScheduledTask "SetupScoop"
       $scoopComplete = $false
       do {
-        $scoopComplete = Test-Path "$env:USERPROFILE\scoop\shims\wget.exe"
+        $scoopComplete = Test-Path "$env:USERPROFILE\scoop"
         if (-not ($scoopComplete)) {
           Start-Sleep 1
         }
