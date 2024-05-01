@@ -3,7 +3,17 @@ if (-not (Test-Path -Path $env:ProgramFiles\Git)) {
 }
 
 if (-not (Test-Path -Path $env:USERPROFILE\win-config)) {
-  & $env:ProgramFiles\Git\bin\git.exe clone https://github.com/ozokuz/win-config $env:USERPROFILE\win-config
+  $action = New-ScheduledTaskAction -Execute "$env:ProgramFiles\Git\bin\git.exe" -Argument "clone https://github.com/ozokuz/win-config $env:USERPROFILE\win-config"
+  Register-ScheduledTask -TaskName "CloneWinConfigRepo" -Action $action
+  Start-ScheduledTask "CloneWinConfigRepo"
+  $complete = $false
+  do {
+    $complete = Test-Path "$env:USERPROFILE\win-config"
+    if (-not ($complete)) {
+      Start-Sleep 1
+    }
+  } until ($complete)
+  Unregister-ScheduledTask "CloneWinConfigRepo" -Confirm:$false
 }
 
 if (-not(Test-Path -Path $env:LOCALAPPDATA\Microsoft\WinGet\Configuration\Modules)) {
