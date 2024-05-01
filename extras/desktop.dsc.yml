@@ -2,6 +2,15 @@
 properties:
   configurationVersion: "0.2.0"
   resources:
+    # Install Corsair iCUE
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: iCUE
+      directives:
+        description: Install iCUE
+        allowPrerelease: true
+      settings:
+        id: Corsair.iCUE.5
+        source: winget
     # Install Windows Features (Hyper-V & Hypervisor Platform)
     - resource: PSDscResources/Script
       id: HyperV
