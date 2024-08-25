@@ -41,11 +41,6 @@ properties:
       settings:
         Ensure: Present
         RestartExplorer: true
-    # Run O&O Shutup 10++
-    - resource: Ozoku.Debloat/RunOOSU
-      id: OOSU
-      directives:
-        description: Run OOSU
     # Install Utils (7-Zip, PowerToys, PowerShell, Everything, AltSnap, ShareX, Tailscale, EarTrumpet, WizTree & Nilesoft Shell)
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: 7Zip
