@@ -143,7 +143,7 @@ wsl.exe --install
 LogStep "`r`nWSL Installed"
 
 # Install Apps
-LogStep "Installing Apps"
+Write-Output "Installing Apps"
 Get-Content "$env:USERPROFILE\win-config\values\winget.txt" | ForEach-Object {
   Write-Output "`r`nInstalling $_`r`n"
   winget install -e $_ -s winget
@@ -154,8 +154,8 @@ LogStep "`r`nApps Installed"
 LogStep "Installing Visual Studio Components"
 $vsBase = "${env:ProgramFiles(x86)}\Microsoft Visual Studio"
 $vsArgs = "modify --productId Microsoft.VisualStudio.Product.Community --channelId VisualStudio.17.Release --quiet --norestart --config $env:USERPROFILE\win-config\values\vsconfig.json"
-Start-Process -FilePath "$vsBase\Installer\setup.exe" -ArgumentList $vsArgs -Wait
-$activeInstaller = Get-Process Setup | Where-Object { $_Path -like "$vsBase*" } | ForEach-Object { $_.EnableRaisingEvents = $true }
+Start-Process -FilePath "$vsBase\Installer\setup.exe" -ArgumentList $vsArgs -Wait | Out-Null
+$activeInstaller = Get-Process Setup -ErrorAction SilentlyContinue | Where-Object { $_Path -like "$vsBase*" } -ErrorAction SilentlyContinue | ForEach-Object { $_.EnableRaisingEvents = $true } -ErrorAction SilentlyContinue
 if ($activeInstaller) {
   Wait-Process -Id ($activeInstaller | Select-Object -ExpandProperty Id) -Timeout 3600
 }
