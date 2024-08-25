@@ -8,8 +8,8 @@ $global:QuickAccessLocation = "shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}"
 # Functions
 function RunRegular ([string]$taskName, [string]$command, [string]$argument, [ScriptBlock]$checkComplete) {
   $action = New-ScheduledTaskAction -Execute $command -Argument $argument
-  Register-ScheduledTask -TaskName $taskName -Action $action -InformationAction SilentlyContinue
-  Start-ScheduledTask $taskName -InformationAction SilentlyContinue
+  Register-ScheduledTask -TaskName $taskName -Action $action | Out-Null
+  Start-ScheduledTask $taskName | Out-Null
   $complete = $false
   do {
     $complete = (&$checkComplete)
@@ -17,11 +17,11 @@ function RunRegular ([string]$taskName, [string]$command, [string]$argument, [Sc
       Start-Sleep 1
     }
   } until ($complete)
-  Unregister-ScheduledTask $taskName -Confirm:$false -InformationAction SilentlyContinue
+  Unregister-ScheduledTask $taskName -Confirm:$false | Out-Null
 }
 
 function SymbolicLink($source, $path) {
-  New-Item -Type SymbolicLink -Value $source -Path $path -InformationAction SilentlyContinue
+  New-Item -Type SymbolicLink -Value $source -Path $path | Out-Null
 }
 
 function LogStep($message) {
@@ -59,10 +59,12 @@ if (-not (Test-Path -Path $env:ProgramFiles\Git)) {
 
 # Clone win-config
 LogStep "Cloning config"
-function ConfigCloned { Test-Path "$env:USERPROFILE\win-config\run.ps1" -PathType Leaf }
+function ConfigCloned {
+  Test-Path "$env:USERPROFILE\win-config\run.ps1" -PathType Leaf
+  Start-Sleep 2
+}
 if (-not(ConfigCloned)) {
   RunRegular -taskName "CloneWinConfigRepo" -command "$env:ProgramFiles\Git\bin\git.exe" -argument "clone https://github.com/ozokuz/win-config $env:USERPROFILE\win-config --branch simplified" -checkComplete $function:ConfigCloned
-  Start-Sleep 2
 }
 
 # Set Location
@@ -77,7 +79,7 @@ LogStep "Folders Created"
 # Setup Quick Access Pins
 LogStep "Setting up Quick Access Pins"
 $o = New-Object -ComObject shell.application
-($o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items()).InvokeVerb("unpinfromhome");
+($o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items() | Where-Object {$_.name -notin @()}).InvokeVerb("unpinfromhome");
 Get-Content "$env:USERPROFILE\win-config\values\quick-access.txt" | ForEach-Object {
   $o.Namespace("$(Invoke-Expression $_)").Self.InvokeVerb("pintohome")
 }
