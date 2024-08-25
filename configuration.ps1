@@ -31,6 +31,10 @@ function LogStep($message) {
 # Start
 LogStep "Starting Configuration"
 
+# Disable UAC
+LogStep "Disabling UAC while configuring"
+Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name EnableLUA -Value 0
+
 # Registry Edits
 LogStep "Applying Registry Edits"
 Set-ItemProperty -Path $global:ExplorerRegistryPath -Name 'HideIcons' -Value 1
@@ -56,6 +60,7 @@ LogStep "Installing Git"
 if (-not (Test-Path -Path $env:ProgramFiles\Git)) {
   winget install -e Git.Git -s winget
 }
+LogStep "`r`nGit Installed"
 
 # Clone win-config
 LogStep "Cloning config"
@@ -73,7 +78,12 @@ Set-Location "$env:USERPROFILE\win-config"
 
 # Create Folders
 LogStep "Creating Folders"
-Get-Content "$env:USERPROFILE\win-config\values\folders.txt" | ForEach-Object { New-Item -Path "$(Invoke-Expression $_)" -ItemType Directory | Out-Null }
+Get-Content "$env:USERPROFILE\win-config\values\folders.txt" | ForEach-Object {
+  $path = "$(Invoke-Expression $_)"
+  if (-not (Test-Path -Path $path)) {
+    New-Item -Path $path -ItemType Directory | Out-Null
+  }
+}
 LogStep "Folders Created"
 
 # Setup Quick Access Pins
@@ -120,6 +130,10 @@ Get-Content "$env:USERPROFILE\win-config\values\conf-paths.txt" | ForEach-Object
   SymbolicLink -source "$env:USERPROFILE\win-config\configs\$file" -path $path
 }
 LogStep "Config Symlinks Set"
+
+# Restore UAC
+LogStep "Restoring UAC"
+Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name EnableLUA -Value 1
 
 # Complete
 LogStep "Configuration Complete"
