@@ -57,7 +57,7 @@ if (-not (Test-Path -Path $env:ProgramFiles\Git)) {
 Write-Output "Cloning config"
 function ConfigCloned { Test-Path "$env:USERPROFILE\win-config" }
 if (-not(ConfigCloned)) {
-  RunRegular -taskName "CloneWinConfigRepo" -command "$env:ProgramFiles\Git\bin\git.exe" -argument "clone https://github.com/ozokuz/win-config $env:USERPROFILE\win-config" -checkComplete $function:ConfigCloned
+  RunRegular -taskName "CloneWinConfigRepo" -command "$env:ProgramFiles\Git\bin\git.exe" -argument "clone https://github.com/ozokuz/win-config $env:USERPROFILE\win-config --branch simplified" -checkComplete $function:ConfigCloned
 }
 
 # Set Location
@@ -80,7 +80,7 @@ Write-Output "Quick Access Pins Set"
 
 # Run OOSU
 Write-Output "Running OOSU"
-oosuPath = "$env:USERPROFILE\Tools\OOSU"
+$oosuPath = "$env:USERPROFILE\Tools\OOSU"
 Invoke-WebRequest "https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe" -OutFile "$oosuPath\OOSU10.exe"
 & "$oosuPath\OOSU10.exe" "$env:USERPROFILE\win-config\values\ooshutup10.cfg" /quiet
 Write-Output "OOSU Complete"
