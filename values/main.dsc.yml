@@ -2,29 +2,6 @@
 properties:
   configurationVersion: "0.2.0"
   resources:
-    # Set PowerShell Execution Policy
-    - resource: Ozoku.Settings/PowerShellExecutionPolicy
-      id: ExecutionPolicy
-      directives:
-        description: Set PowerShell Execution Policy
-    # Remove Default App Bloat
-    - resource: Ozoku.Debloat/RemoveDefaultApps
-      id: RemoveDefaultApps
-      directives:
-        description: Remove Default App Bloat
-    # Install Scoop & Buckets
-    - resource: Ozoku.Scoop/InstallScoop
-      id: Scoop
-      directives:
-        description: Install Scoop
-    - resource: Ozoku.Scoop/ScoopBucket
-      id: ExtrasBucket
-      dependsOn:
-        - Scoop
-      directives:
-        description: Add Extras bucket
-      settings:
-        Name: extras
     # Settings
     # Enable Developer Mode
     - resource: Microsoft.Windows.Developer/DeveloperMode
@@ -44,29 +21,6 @@ properties:
         FileExtensions: Show
         HiddenFiles: Show
         RestartExplorer: true
-    # Custom Explorer Settings
-    - resource: Ozoku.Settings/Explorer
-      id: ExplorerSettings
-      directives:
-        description: Custom Explorer Settings
-      settings:
-        LaunchTo: ThisPC
-        DesktopIcons: Hide
-    # Custom System Settings
-    - resource: Ozoku.Settings/System
-      id: SystemSettings
-      directives:
-        description: Custom System Settings
-      settings:
-        StorageSense: Disable
-    # Custom Registry Tweaks
-    - resource: Ozoku.Settings/RegistryTweaks
-      id: RegistryTweaks
-      directives:
-        description: Custom Registry Tweaks
-      settings:
-        LongPaths: Enable
-        UTCTime: Enable
     # Taskbar Settings
     - resource: Microsoft.Windows.Developer/Taskbar
       id: TaskbarSettings
@@ -92,44 +46,6 @@ properties:
       id: OOSU
       directives:
         description: Run OOSU
-    # Setup Folder Structure
-    - resource: Ozoku.Folders/FolderStructure
-      id: FolderStructure
-      directives:
-        description: Setup Folder Structure
-      settings:
-        Folders:
-          - "$env:USERPROFILE\\.config"
-          - "$env:USERPROFILE\\Tools"
-          - "D:\\packages"
-          - "D:\\packages\\npm"
-          - "D:\\packages\\pip"
-          - "D:\\packages\\cargo"
-          - "D:\\packages\\maven"
-          - "D:\\src"
-          - "D:\\src\\p"
-          - "D:\\src\\s"
-          - "D:\\src\\nrth"
-    # Setup Quick Access Pins
-    - resource: Ozoku.Folders/QuickAccess
-      id: QuickAccess
-      dependsOn:
-        - FolderStructure
-      directives:
-        description: Setup Quick Access Pins
-      settings:
-        UserFolder: true
-        Downloads: true
-        Documents: true
-        RecycleBin: true
-        Desktop: false
-        Pictures: false
-        Videos: false
-        Music: false
-        OtherPins:
-          - "D:\\src"
-          - "$env:USERPROFILE\\Tools"
-          - "F:\\Vault"
     # Install Utils (7-Zip, PowerToys, PowerShell, Everything, AltSnap, ShareX, Tailscale, EarTrumpet, WizTree & Nilesoft Shell)
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: 7Zip
@@ -189,6 +105,9 @@ properties:
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: EverythingPowerToys
+      dependsOn:
+        - PowerToys
+        - Everything
       directives:
         description: Install EverythingPowerToys
         allowPrerelease: true
@@ -203,18 +122,6 @@ properties:
       settings:
         id: AltSnap.AltSnap
         source: winget
-    - resource: Ozoku.Startup/CreateStartupTask
-      id: AltSnapStartup
-      dependsOn:
-        - AltSnap
-      directives:
-        description: Autostart AltSnap
-      settings:
-        Name: AltSnap
-        Command: "C:\\Users\\Ozoku\\AppData\\Roaming\\AltSnap\\AltSnap.exe"
-        RunLevel: Highest
-        Ensure: Present
-        Type: User
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: ShareX
       directives:
@@ -281,20 +188,20 @@ properties:
         id: Obsidian.Obsidian
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
-      id: TickTick
-      directives:
-        description: Install TickTick
-        allowPrerelease: true
-      settings:
-        id: Appest.TickTick
-        source: winget
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: Bitwarden
       directives:
         description: Install Bitwarden
         allowPrerelease: true
       settings:
         id: Bitwarden.Bitwarden
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Arc
+      directives:
+        description: Install Arc
+        allowPrerelease: true
+      settings:
+        id: TheBrowserCompany.Arc
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: Brave
@@ -398,12 +305,6 @@ properties:
       settings:
         id: WinSCP.WinSCP
         source: winget
-    - resource: Ozoku.WSL/InstallWSL
-      id: WSL
-      directives:
-        description: Install WSL
-      settings:
-        Ensure: Present
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: Docker
       directives:
@@ -412,134 +313,6 @@ properties:
       settings:
         id: Docker.DockerDesktop
         source: winget
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Bat
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Bat
-      settings:
-        Name: bat
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Eza
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Eza
-      settings:
-        Name: eza
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Fd
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Fd
-      settings:
-        Name: fd
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Fzf
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Fzf
-      settings:
-        Name: fzf
-    - resource: Ozoku.Scoop/ScoopApp
-      id: GCC
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install GCC
-      settings:
-        Name: gcc
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Grep
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Grep
-      settings:
-        Name: grep
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Lazygit
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Lazygit
-      settings:
-        Name: lazygit
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Make
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Make
-      settings:
-        Name: make
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Neovim
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Neovim
-      settings:
-        Name: neovim
-    - resource: Ozoku.Scoop/ScoopApp
-      id: NodeJS
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install NodeJS
-      settings:
-        Name: nodejs-lts
-    - resource: Ozoku.Scoop/ScoopApp
-      id: PNPM
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install PNPM
-      settings:
-        Name: pnpm
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Python
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Python
-      settings:
-        Name: python
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Ripgrep
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Ripgrep
-      settings:
-        Name: ripgrep
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Starship
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Starship
-      settings:
-        Name: starship
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Wget
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Wget
-      settings:
-        Name: wget
-    - resource: Ozoku.Scoop/ScoopApp
-      id: Zoxide
-      dependsOn:
-        - Scoop
-      directives:
-        description: Install Zoxide
-      settings:
-        Name: zoxide
     # Games
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       id: Steam

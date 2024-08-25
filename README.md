@@ -18,8 +18,7 @@
 - Enable Clipboard History
 - Terminal as Default
 - Set Wallpaper
-- Install Docker
 - WSL Configuration
 - Phone Link
 
-`winget configure .\base.dsc.yml --accept-configuration-agreements`
+`irm https://raw.githubusercontent.com/ozokuz/win-config/simplified/run.ps1 | iex`
