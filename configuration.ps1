@@ -3,6 +3,11 @@ $global:ExplorerRegistryPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\
 $global:StorageSenseRegistryPath = 'HKLM:\Software\Policies\Microsoft\Windows\StorageSense\'
 $global:TimeZoneRegistryPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\TimeZoneInformation\'
 $global:FileSystemRegistryPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem\'
+$global:AppModelUnlockRegistryKeyPath = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock\'
+$global:PersonalizeRegistryPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize\'
+$global:SearchRegistryPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Search\'
+$global:UACRegistryPath = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System\'
+
 $global:QuickAccessLocation = "shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}"
 
 # Functions
@@ -32,22 +37,46 @@ function LogStep($message) {
 LogStep "Starting Configuration"
 
 # Disable UAC
-LogStep "Disabling UAC while configuring"
-Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name EnableLUA -Value 0
+LogStep "Disabling UAC"
+Set-ItemProperty -Path $global:UACRegistryPath -Name 'ConsentPromptBehaviorAdmin' -Value 0
 
 # Registry Edits
 LogStep "Applying Registry Edits"
+
+# Hide Desktop Icons
 Set-ItemProperty -Path $global:ExplorerRegistryPath -Name 'HideIcons' -Value 1
+# Hide Taskbar Search Box
+Set-ItemProperty -Path $global:SearchRegistryPath -Name 'SearchboxTaskbarMode' -Value 0
+# Hide Task View Button
+Set-ItemProperty -Path $global:ExplorerRegistryPath -Name 'ShowTaskViewButton' -Value 0
+# Hide Widgets Button
+Set-ItemProperty -Path $global:ExplorerRegistryPath -Name 'TaskbarDa' -Value 0
+# Start explorer in This PC
 Set-ItemProperty -Path $global:ExplorerRegistryPath -Name 'LaunchTo' -Value 1
+# Show File Extensions
+Set-ItemProperty -Path $global:ExplorerRegistryPath -Name 'HideFileExt' -Value 0
+# Show Hidden Files
+Set-ItemProperty -Path $global:ExplorerRegistryPath -Name 'Hidden' -Value 1
+# Dark Mode
+Set-ItemProperty -Path $global:PersonalizeRegistryPath -Name 'AppsUseLightTheme' -Value 0
+Set-ItemProperty -Path $global:PersonalizeRegistryPath -Name 'SystemUsesLightTheme' -Value 0
+# Disable Storage Sense
 if (-not (Test-Path -Path $global:StorageSenseRegistryPath)) {
   New-Item -Path $global:StorageSenseRegistryPath -Force | Out-Null
 }
 Set-ItemProperty -Path $global:StorageSenseRegistryPath -Name 'AllowStorageSenseGlobal' -Value 1
+# Enable Long Paths
 Set-ItemProperty -Path $global:FileSystemRegistryPath -Name 'LongPathsEnabled' -Value 1
+# Use UTC Clock
 Set-ItemProperty -Path $global:TimeZoneRegistryPath -Name 'RealTimeIsUniversal' -Value 1
+# Enable Developer Mode
+if (-not (Test-Path -Path $global:AppModelUnlockRegistryKeyPath)) {
+  New-Item -Path $global:AppModelUnlockRegistryKeyPath -Force | Out-Null
+}
+Set-ItemProperty -Path $global:AppModelUnlockRegistryKeyPath -Name 'AllowDevelopmentWithoutDevLicense' -Value 1
+
 LogStep "Registry Edits Applied, Restarting Explorer"
-taskkill /F /IM explorer.exe | Out-Null
-Start-Process explorer.exe
+Stop-Process -ProcessName Explorer
 
 # Remove Default Apps
 LogStep "Removing Default Apps"
@@ -115,8 +144,22 @@ LogStep "`r`nWSL Installed"
 
 # Install Apps
 LogStep "Installing Apps"
-winget configure "$env:USERPROFILE\win-config\values\main.dsc.yml" --accept-configuration-agreements
-LogStep "Apps Installed"
+Get-Content "$env:USERPROFILE\win-config\values\winget.txt" | ForEach-Object {
+  Write-Output "`r`nInstalling $_`r`n"
+  winget install -e $_ -s winget
+}
+LogStep "`r`nApps Installed"
+
+# Install Visual Studio Components
+LogStep "Installing Visual Studio Components"
+$vsBase = "${env:ProgramFiles(x86)}\Microsoft Visual Studio"
+$vsArgs = "modify --productId Microsoft.VisualStudio.Product.Community --channelId VisualStudio.17.Release --quiet --norestart --config $env:USERPROFILE\win-config\values\vsconfig.json"
+Start-Process -FilePath "$vsBase\Installer\setup.exe" -ArgumentList $vsArgs -Wait
+$activeInstaller = Get-Process Setup | Where-Object { $_Path -like "$vsBase*" } | ForEach-Object { $_.EnableRaisingEvents = $true }
+if ($activeInstaller) {
+  Wait-Process -Id ($activeInstaller | Select-Object -ExpandProperty Id) -Timeout 3600
+}
+LogStep "Visual Studio Components Installed"
 
 # Setup Config Symlinks
 LogStep "Setting up Config Symlinks"
@@ -131,9 +174,9 @@ Get-Content "$env:USERPROFILE\win-config\values\conf-paths.txt" | ForEach-Object
 }
 LogStep "Config Symlinks Set"
 
-# Restore UAC
-LogStep "Restoring UAC"
-Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name EnableLUA -Value 1
+# Re-enable UAC
+LogStep "Re-enabling UAC"
+Set-ItemProperty -Path $global:UACRegistryPath -Name 'ConsentPromptBehaviorAdmin' -Value 5
 
 # Complete
 LogStep "Configuration Complete"
