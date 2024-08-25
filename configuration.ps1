@@ -36,13 +36,13 @@ LogStep "Applying Registry Edits"
 Set-ItemProperty -Path $global:ExplorerRegistryPath -Name 'HideIcons' -Value 1
 Set-ItemProperty -Path $global:ExplorerRegistryPath -Name 'LaunchTo' -Value 1
 if (-not (Test-Path -Path $global:StorageSenseRegistryPath)) {
-  New-Item -Path $global:StorageSenseRegistryPath -Force
+  New-Item -Path $global:StorageSenseRegistryPath -Force | Out-Null
 }
 Set-ItemProperty -Path $global:StorageSenseRegistryPath -Name 'AllowStorageSenseGlobal' -Value 1
 Set-ItemProperty -Path $global:FileSystemRegistryPath -Name 'LongPathsEnabled' -Value 1
 Set-ItemProperty -Path $global:TimeZoneRegistryPath -Name 'RealTimeIsUniversal' -Value 1
 LogStep "Registry Edits Applied, Restarting Explorer"
-taskkill /F /IM explorer.exe
+taskkill /F /IM explorer.exe | Out-Null
 Start-Process explorer.exe
 
 # Remove Default Apps
@@ -73,13 +73,13 @@ Set-Location "$env:USERPROFILE\win-config"
 
 # Create Folders
 LogStep "Creating Folders"
-Get-Content "$env:USERPROFILE\win-config\values\folders.txt" | ForEach-Object { New-Item -Path "$(Invoke-Expression $_)" -ItemType Directory }
+Get-Content "$env:USERPROFILE\win-config\values\folders.txt" | ForEach-Object { New-Item -Path "$(Invoke-Expression $_)" -ItemType Directory | Out-Null }
 LogStep "Folders Created"
 
 # Setup Quick Access Pins
 LogStep "Setting up Quick Access Pins"
 $o = New-Object -ComObject shell.application
-($o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items() | Where-Object {$_.name -notin @()}).InvokeVerb("unpinfromhome");
+($o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items() | Where-Object { $_.name -notin @() }).InvokeVerb("unpinfromhome");
 Get-Content "$env:USERPROFILE\win-config\values\quick-access.txt" | ForEach-Object {
   $o.Namespace("$(Invoke-Expression $_)").Self.InvokeVerb("pintohome")
 }
@@ -93,28 +93,28 @@ Invoke-WebRequest "https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe" -Out
 LogStep "OOSU Complete"
 
 # Install Scoop & Tools
-LogStep "Installing Scoop & Tools"
+LogStep "Installing Scoop & CLI Tools"
 function ScoopInstalled { Test-Path "$env:USERPROFILE\scoop\.complete" -PathType Leaf }
 RunRegular -taskName "ScoopSetup" -command "powershell.exe" -argument "$env:USERPROFILE\win-config\scripts\scoop.ps1" -checkComplete $function:ScoopInstalled
-LogStep "Scoop & Tools Installed"
+LogStep "Installation of Scoop & CLI Tools Completed"
 
 # Install WSL
 LogStep "Installing WSL"
 wsl.exe --install
-LogStep "WSL Installed"
+LogStep "`r`nWSL Installed"
 
 # Install Apps
 LogStep "Installing Apps"
-winget configure .\main.dsc.yml --accept-configuration-agreements
+winget configure "$env:USERPROFILE\win-config\values\main.dsc.yml" --accept-configuration-agreements
 LogStep "Apps Installed"
 
 # Setup Config Symlinks
 LogStep "Setting up Config Symlinks"
-Get-Content "$env:USERPROFILE\values\conf-paths.txt" | ForEach-Object {
+Get-Content "$env:USERPROFILE\win-config\values\conf-paths.txt" | ForEach-Object {
   $path = "$(Invoke-Expression $_)"
   $dir = Split-Path -Path $path -Parent
   if (-not (Test-Path -Path $dir)) {
-    New-Item -Path $dir -ItemType Directory
+    New-Item -Path $dir -ItemType Directory | Out-Null
   }
   $file = Split-Path -Path $path -Leaf
   SymbolicLink -source "$env:USERPROFILE\win-config\configs\$file" -path $path
