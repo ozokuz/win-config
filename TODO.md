@@ -11,6 +11,6 @@
 
 - NeoVim
 - IDEA Vim
-- VSCode?
-- Terminal?
-- PowerToys?
+- Terminal
+- PowerToys
+- Komorebi, whkd & yasb
