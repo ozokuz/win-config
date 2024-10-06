@@ -1,0 +1,44 @@
+.shell pwsh
+
+# Reload Config
+alt + o         : taskkill /f /im whkd.exe && Start-Process whkd -WindowStyle Hidden
+alt + shift + o : komorebic reload-configuration
+
+# Focus Windows
+alt + h : komorebic focus left
+alt + j : komorebic focus down
+alt + k : komorebic focus up
+alt + l : komorebic focus right
+
+# Move Windows
+alt + shift + h : komorebic move left
+alt + shift + j : komorebic move down
+alt + shift + k : komorebic move up
+alt + shift + l : komorebic move right
+
+# Resize
+alt + left  : komorebic resize-axis horizontal decrease
+alt + right : komorebic resize-axis horizontal increase
+alt + down  : komorebic resize-axis vertical decrease
+alt + up    : komorebic resize-axis vertical increase
+
+# Special
+alt + t : komorebic toggle-float
+alt + r : komorebic retile
+alt + q : komorebic close
+
+# Workspaces
+alt + 1 : komorebic focus-workspace 0
+alt + 2 : komorebic focus-workspace 1
+alt + 3 : komorebic focus-workspace 2
+alt + 4 : komorebic focus-workspace 3
+alt + 5 : komorebic focus-workspace 4
+alt + 6 : komorebic focus-workspace 5
+
+# Move windows between workspaces
+alt + shift + 1 : komorebic send-to-workspace 0
+alt + shift + 2 : komorebic send-to-workspace 1
+alt + shift + 3 : komorebic send-to-workspace 2
+alt + shift + 4 : komorebic send-to-workspace 3
+alt + shift + 5 : komorebic send-to-workspace 4
+alt + shift + 6 : komorebic send-to-workspace 5

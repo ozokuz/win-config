@@ -1,0 +1,215 @@
+* {
+  font-size: 12px;
+  color: #cdd6f4;
+  font-weight: 500;
+  font-family: "Symbols Nerd Font";
+  margin: 0;
+  padding: 0;
+}
+.yasb-bar {
+  padding: 0;
+  margin: 0;
+}
+.widget {
+  background-color: #1e1e2e;
+  padding: 0 6px;
+  margin: 0;
+}
+.widget .label {
+  padding: 1px 2px 1px 2px;
+}
+.widget .label.alt {
+  padding: 1px 8px 1px 8px;
+}
+.container-left,
+.container-center,
+.container-right {
+  margin: 0;
+  padding: 0;
+}
+.icon {
+  font-size: 16px;
+}
+
+.komorebi-workspaces {
+  border-top-right-radius: 18px;
+  border-bottom-right-radius: 18px;
+  padding-left: 8px;
+  padding-right: 14px;
+}
+.komorebi-workspaces .ws-btn {
+  font-size: 16px;
+  background-color: transparent;
+  margin: 0 4px 0 4px;
+  color: #95a0ad;
+  border: none;
+}
+.komorebi-workspaces .ws-btn.populated {
+  color: #a0c3ee;
+}
+.komorebi-workspaces .ws-btn:hover,
+.komorebi-workspaces .ws-btn.populated:hover,
+.komorebi-workspaces .ws-btn.active {
+  color: #c2daf7;
+}
+
+.active-window-widget {
+  border-radius: 18px;
+  margin-left: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.media-widget {
+  padding-left: 12px;
+  padding-right: 0;
+  margin: 0;
+  border-radius: 18px;
+}
+.media-widget .label {
+  padding-left: 6px;
+  background-color: rgba(0, 0, 0, 0);
+  padding-right: 12px;
+}
+.media-widget .btn {
+  color: #acb2c9;
+  padding: 0;
+  font-size: 18px;
+}
+.media-widget .btn:hover {
+  color: #89b4fa;
+}
+.media-widget .btn.play {
+  font-size: 24px;
+}
+.media-widget .btn.prev {
+  padding: 0 4px 0 0px;
+}
+.media-widget .btn.next {
+  padding: 0 8px 0 4px;
+}
+.media-widget .btn.disabled:hover,
+.media-widget .btn.disabled {
+  color: #4e525c;
+}
+
+.weather-widget {
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+  padding-left: 12px;
+}
+.weather-widget .icon {
+  font-size: 16px;
+  margin: 0 2px 1px 0;
+}
+.weather-widget .icon.sunnyDay {
+  color: rgb(221, 210, 107);
+}
+.weather-widget .icon.clearNight {
+  color: rgb(107, 189, 221);
+  font-size: 22px;
+  margin: 1px 2px 0px 0;
+}
+
+.volume-widget .icon {
+  color: #89b4fa;
+  margin: 1px 2px 0 0;
+}
+
+.wifi-widget .icon {
+  color: #43d8d8;
+  margin: 0;
+}
+
+.battery-widget {
+  border-top-right-radius: 18px;
+  border-bottom-right-radius: 18px;
+  padding-right: 12px;
+}
+
+.clock-widget {
+  margin-left: 8px;
+  padding-left: 12px;
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+}
+
+.uptime {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #ffffff;
+  font-weight: 600;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+.power-menu-widget {
+  padding-right: 12px;
+}
+.power-menu-widget .label {
+  color: #f38ba8;
+  font-size: 13px;
+}
+.power-menu-popup {
+  background-color: rgba(24, 24, 37, 0.9);
+  border-radius: 12px;
+  border: 4px solid rgb(41, 42, 58);
+}
+.power-menu-popup .button {
+  padding: 0;
+  width: 240px;
+  height: 120px;
+  border-radius: 8px;
+  font-family: "SegoeUI";
+  color: white;
+  margin: 8px;
+}
+.power-menu-popup .button.hover {
+  background-color: rgb(55, 56, 75);
+}
+.power-menu-popup .button .label {
+  display: none;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+.power-menu-popup .button .icon {
+  font-size: 48px;
+  padding-top: 8px;
+  color: rgba(255, 255, 255, 0.25);
+}
+.power-menu-popup .button.cancel .icon {
+  color: rgba(243, 139, 168, 0.55);
+}
+.power-menu-popup .button.cancel .label {
+  color: rgba(243, 139, 168, 0.95);
+}
+.power-menu-popup .button.shutdown .icon {
+  color: rgba(137, 180, 250, 0.55);
+}
+.power-menu-popup .button.shutdown .label {
+  color: rgba(137, 180, 250, 0.95);
+}
+
+/* Battery widget value colors. Uncomment if you want to color of the battery widget icon to change based on status */
+
+/*
+.battery-widget.status-charging .icon {
+  color: #74c7ec;
+}
+.battery-widget.status-full .icon {
+  color: #94e2d5;
+}
+.battery-widget.status-high .icon {
+  color: #a6e3a1;
+}
+.battery-widget.status-medium .icon {
+  color: #f9e2af;
+}
+.battery-widget.status-low .icon {
+  color: #fab387;
+}
+.battery-widget.status-critical .icon {
+  color: #f38ba8;
+}
+*/
