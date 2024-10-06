@@ -1,0 +1,7 @@
+"$env:USERPROFILE"
+"D:\src"
+"$env:USERPROFILE\Tools"
+"$env:USERPROFILE\Downloads"
+"$env:USERPROFILE\Documents"
+"::{645FF040-5081-101B-9F08-00AA002F954E}"
+"F:\Vault"

@@ -9,11 +9,8 @@
 
 ## Configs
 
-- Powershell
-- Starship
 - NeoVim
 - IDEA Vim
-- VSCode?
-- Terminal?
-- PowerToys?
-- Git
+- Terminal
+- PowerToys
+- Komorebi, whkd & yasb
